@@ -70,7 +70,7 @@ export default function HotelDetails() {
         
         {/* Breadcrumbs */}
         <div className="breadcrumbs">
-          <span>Home</span> › <span>Countries</span> › <span>India</span> › <span>Manali</span> › <span className="active">Indian Backpackers Hostel</span>
+          <span>Dashboard</span> › <span>Countries</span> › <span>India</span> › <span>Manali</span> › <span className="active">Indian Backpackers Hostel</span>
         </div>
 
         {/* Image Gallery */}

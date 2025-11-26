@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import { useNavigate } from "react-router-dom";
 
 // --- DATA: Static Hotel List ---
 const hotelList = [
@@ -71,88 +72,108 @@ const hotelList = [
 ];
 
 export default function HotelList() {
+
+  const navigate = useNavigate();
+
   return (
     <div className="page-container">
       {/* 1. HEADER (Compact for List Page) */}
       <header className="site-header compact">
         <div className="header-content">
-          <div className="logo-section">
+          <div
+            className="logo-section"
+            onClick={() => navigate("/")}
+            style={{ cursor: 'pointer' }}
+          >
             <span className="logo-icon">🏯</span>
             <div className="brand-name">
               <span>Beyond Trips</span>
             </div>
           </div>
           <nav className="top-nav">
-             <a href="#">Groups (9+ Rooms)</a>
-             <a href="#">Travel Guides</a>
-             <a href="#">My Booking</a>
-             <div className="nav-divider"></div>
-             <a href="#">English ▾</a>
-             <div className="call-us-small">
-               <span>Call now</span> 80 0040 2670
-             </div>
+            <a href="#">Groups (9+ Rooms)</a>
+            <a href="#">Travel Guides</a>
+            <a href="#">My Booking</a>
+            <div className="nav-divider"></div>
+            <a href="#">English ▾</a>
+            <div className="call-us-small">
+              <span>Call now</span> 80 0040 2670
+            </div>
           </nav>
         </div>
       </header>
 
       {/* 2. SEARCH SUMMARY BAR */}
       <div className="search-summary-section">
-        <div className="breadcrumbs-small">Home / Countries / India / Manali</div>
+        <div
+          className="breadcrumbs-small"
+          onClick={() => navigate("/")}
+          style={{ cursor: 'pointer' }}
+        >
+          Home / Countries / India / Manali
+        </div>
         <h1>Manali, Himachal Pradesh, India</h1>
 
         <div className="search-filters-bar">
-           <div className="filter-group">
-             <div className="f-label">Check-in</div>
-             <div className="f-value">Fri, Nov 28</div>
-           </div>
-           <div className="filter-group">
-             <div className="f-label">Check-out</div>
-             <div className="f-value">Sat, Dec 6</div>
-           </div>
-           <div className="filter-group">
-             <div className="f-label">Rooms</div>
-             <div className="f-value">1</div>
-           </div>
-           <div className="filter-group">
-             <div className="f-label">Adults</div>
-             <div className="f-value">2</div>
-           </div>
-           <div className="change-dates-link">Change dates</div>
+          <div className="filter-group">
+            <div className="f-label">Check-in</div>
+            <div className="f-value">Fri, Nov 28</div>
+          </div>
+          <div className="filter-group">
+            <div className="f-label">Check-out</div>
+            <div className="f-value">Sat, Dec 6</div>
+          </div>
+          <div className="filter-group">
+            <div className="f-label">Rooms</div>
+            <div className="f-value">1</div>
+          </div>
+          <div className="filter-group">
+            <div className="f-label">Adults</div>
+            <div className="f-value">2</div>
+          </div>
+          <div className="change-dates-link">Change dates</div>
 
-           <div className="right-filters">
-             <div className="price-slider-mock">
-               <span className="price-label">Price per night</span>
-               <div className="slider-track">
-                  <div className="slider-thumb left"></div>
-                  <div className="slider-thumb right"></div>
-               </div>
-             </div>
-             <select className="filter-select"><option>All hotels</option></select>
-             <select className="filter-select"><option>Lowest price</option></select>
-           </div>
+          <div className="right-filters">
+            <div className="price-slider-mock">
+              <span className="price-label">Price per night</span>
+              <div className="slider-track">
+                <div className="slider-thumb left"></div>
+                <div className="slider-thumb right"></div>
+              </div>
+            </div>
+            <select className="filter-select"><option>All hotels</option></select>
+            <select className="filter-select"><option>Lowest price</option></select>
+          </div>
         </div>
       </div>
 
       {/* 3. MAIN CONTENT: LIST + MAP */}
       <div className="list-page-layout">
-        
+
         {/* LEFT COLUMN: Hotel List */}
         <div className="hotel-list-col">
           <div className="list-count">172 Manali hotels available</div>
-          
+
           <div className="hotel-cards-container">
             {hotelList.map((hotel) => (
               <div key={hotel.id} className="list-card">
                 <div className="lc-image">
                   <img src={hotel.image} alt={hotel.name} />
                 </div>
+
                 <div className="lc-content">
                   <div className="lc-header">
-                    <h3>{hotel.name}</h3>
+                    <h3
+                      onClick={() => navigate(`/hotel/${hotel.id}`)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {hotel.name}
+                    </h3>
                     {hotel.rating && <span className="stars">{hotel.rating}</span>}
                   </div>
+
                   <p className="lc-address">{hotel.address}</p>
-                  
+
                   <div className="lc-amenities">
                     {hotel.amenities.map(am => (
                       <span key={am}>📶 {am}</span>
@@ -160,11 +181,17 @@ export default function HotelList() {
                     <div className="more-am">More amenities...</div>
                   </div>
                 </div>
-                
+
                 <div className="lc-price-col">
-                   <div className="lc-price">{hotel.price}</div>
-                   <button className="book-now-small">BOOK NOW</button>
+                  <div className="lc-price">{hotel.price}</div>
+                  <button
+                    className="book-now-small"
+                    onClick={() => navigate(`/hotel/${hotel.id}`)}
+                  >
+                    BOOK NOW
+                  </button>
                 </div>
+
               </div>
             ))}
           </div>
@@ -172,19 +199,22 @@ export default function HotelList() {
 
         {/* RIGHT COLUMN: Map */}
         <div className="map-col">
-           <div className="sticky-map">
-              <div className="map-header-btns">
-                 <button className="map-btn active">Map</button>
-                 <button className="map-btn">Satellite</button>
-              </div>
-              <div className="map-placeholder">
-                 {/* Placeholder for map image or iframe */}
-                 <img src="https://mt1.google.com/vt/lyrs=m&x=23&y=13&z=5" alt="Map View" className="map-img-bg" />
-                 <div className="map-pin p1">📍</div>
-                 <div className="map-pin p2">📍</div>
-                 <div className="map-pin p3">📍</div>
-              </div>
-           </div>
+          <div className="sticky-map">
+            <div className="map-header-btns">
+              <button className="map-btn active">Map</button>
+              <button className="map-btn">Satellite</button>
+            </div>
+            <div className="map-placeholder">
+              <img
+                src="https://mt1.google.com/vt/lyrs=m&x=23&y=13&z=5"
+                alt="Map View"
+                className="map-img-bg"
+              />
+              <div className="map-pin p1">📍</div>
+              <div className="map-pin p2">📍</div>
+              <div className="map-pin p3">📍</div>
+            </div>
+          </div>
         </div>
 
       </div>

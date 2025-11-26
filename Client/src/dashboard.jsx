@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
+import { useNavigate } from "react-router-dom";
+
 const otherCities = [
   "Honolulu Hotels", "Miami Beach Hotels", "Reno Hotels", "Memphis Hotels",
   "Washington D.C. Hotels", "Sydney Hotels", "Phoenix Hotels", "Philadelphia Hotels",
@@ -30,6 +32,7 @@ const destinations = [
   { id: 8, name: "Boston", count: "73 hotels available", image: "https://plus.unsplash.com/premium_photo-1694475434235-12413ec38b3e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
 ];
 
+ 
 // ---------- Date helpers ----------
 function addMonths(date, months) {
   const d = new Date(date);
@@ -227,6 +230,7 @@ function LoginModal({ isOpen, onClose, onLogin }) {
 
 // ---------- MAIN DASHBOARD ----------
 export default function Dashboard() {
+    const navigate = useNavigate();                    // changed//
   const [checkIn, setCheckIn] = useState(null);
   const [checkOut, setCheckOut] = useState(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -242,19 +246,16 @@ export default function Dashboard() {
     setCheckOut(end);
   };
 
-  const handleFindRooms = () => {
-    if (!isLoggedIn) {
-      setIsLoginOpen(true);
-    } else {
-      alert("Searching for rooms...");
-    }
-  };
+   const handleFindRooms = () => {
+    navigate("/hotels");
+  };                                            //changed 
 
   const performLogin = () => {
     setIsLoggedIn(true);
     setIsLoginOpen(false);
     alert("Logged in successfully!");
   };
+  
 
   return (
     <div className="page-container">
