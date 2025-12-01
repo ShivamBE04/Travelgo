@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./App.css";
+import Header from "./components/Header";
+
 
 const HotelDetails = () => {
   const { id } = useParams();
@@ -239,6 +241,9 @@ useEffect(() => {
 
   // ------------------- RENDER -------------------
   return (
+     <>
+    {/* ⭐ FULL-WIDTH HEADER */}
+    <Header />
     <div className="hotel-page-wrapper">
       <div className="details-page">
         {/* HEADER */}
@@ -544,6 +549,7 @@ useEffect(() => {
 
       </div>
     </div>
+      </>
   );
 };
 
