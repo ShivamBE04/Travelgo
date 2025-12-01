@@ -1419,194 +1419,152 @@ body, html {
   background-color: #f9f9f9;
 }
 
-/* Hotel List Column */
-.hotel-list-col {
-  flex: 3; /* Wider column */
-}
-.list-count {
-  font-size: 18px;
+/* HotelList.css */
+
+.page-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
-  margin-bottom: 15px;
-  font-weight: 500;
 }
 
-.list-card {
+.search-summary h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.date-range {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.loader-status {
+  color: #0071c2;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.hotel-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --- CARD CONTAINER --- */
+.hotel-card-horizontal {
   display: flex;
   background: white;
-  border: 1px solid #ddd;
-  margin-bottom: 15px;
-  height: 180px; /* Fixed height for consistency */
+  border: 1px solid #e0e0e0;
   border-radius: 4px;
   overflow: hidden;
+  height: 220px; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-.lc-image {
-  width: 220px;
+/* LEFT: IMAGE */
+.card-left {
+  width: 280px;
   flex-shrink: 0;
 }
-.lc-image img {
+
+.card-left img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.lc-content {
+/* MIDDLE: DETAILS */
+.card-middle {
   flex: 1;
   padding: 15px;
   display: flex;
   flex-direction: column;
 }
-.lc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-.lc-header h3 { margin: 0; font-size: 16px; color: #1E73FF; cursor: pointer; }
-.stars { color: orange; font-size: 12px; }
 
-.lc-address {
-  font-size: 11px;
-  color: #777;
+.card-title {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0071c2; /* Booking blue */
+}
+
+.card-stars {
+  color: #febb02; 
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.card-address {
+  font-size: 13px;
+  color: #333;
   margin-bottom: 15px;
-  line-height: 1.4;
 }
 
-.lc-amenities {
-  font-size: 11px;
-  color: #444;
-}
-.lc-amenities span {
+.card-amenities span {
   display: inline-block;
-  margin-right: 10px;
-  margin-bottom: 4px;
+  font-size: 12px;
+  color: #008009; 
+  margin-right: 12px;
+  padding-right: 12px;
+  border-right: 1px solid #ddd;
 }
-.more-am {
-  color: #777;
-  text-decoration: underline;
-  margin-top: 5px;
+
+.more-amenities {
+  margin-top: auto; 
+  font-size: 12px;
+  color: #0071c2;
   cursor: pointer;
 }
 
-.lc-price-col {
-  width: 160px;
-  border-left: 1px solid #eee;
+/* RIGHT: PRICE & ACTION */
+.card-right {
+  width: 200px;
+  border-left: 1px solid #f0f0f0;
+  padding: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 15px;
+  justify-content: flex-end; /* Push to bottom */
+  align-items: flex-end; /* Push to right */
+  background-color: #fff;
 }
 
-.lc-price {
-  font-size: 20px;
+.price-box {
+  font-size: 24px;
   font-weight: 700;
   color: #333;
   margin-bottom: 10px;
 }
 
-.book-now-small {
-  background-color: #E3A338;
+.price-box-check {
+  font-size: 18px;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.price-currency {
+  font-size: 16px;
+  vertical-align: top;
+  margin-right: 2px;
+}
+
+.btn-book {
+  background-color: #f0ad4e; /* Orange button */
   color: white;
   border: none;
-  padding: 8px 20px;
+  border-radius: 2px;
+  padding: 10px 20px;
   font-weight: 700;
-  font-size: 12px;
-  border-radius: 2px;
+  font-size: 14px;
   cursor: pointer;
-  width: 100%;
+  text-transform: uppercase;
 }
 
-/* Map Column */
-.map-col {
-  flex: 1.2; /* Narrower column */
+.btn-book:hover {
+  background-color: #ec971f;
 }
-
-.sticky-map {
-  position: sticky;
-  top: 20px;
-  background: #eee;
-  height: 600px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  overflow: hidden;
-  position: relative;
-}
-
-.map-header-btns {
-  position: absolute;
-  top: 10px; left: 10px;
-  z-index: 10;
-  background: white;
-  border-radius: 2px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-.map-btn {
-  border: none;
-  background: white;
-  padding: 5px 10px;
-  font-size: 12px;
-  cursor: pointer;
-}
-.map-btn.active {
-  background: #eee;
-  font-weight: bold;
-}
-
-.map-placeholder {
-  width: 100%;
-  height: 100%;
-  background-color: #e5e3df; /* Google Maps Grey */
-  position: relative;
-}
-.map-img-bg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.6;
-}
-
-.map-pin {
-  position: absolute;
-  font-size: 24px;
-  text-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-.p1 { top: 30%; left: 40%; color: #E34838; }
-.p2 { top: 50%; left: 50%; color: #E34838; }
-.p3 { top: 40%; left: 60%; color: #E34838; }
-
-/* Responsive */
-@media (max-width: 900px) {
-  .list-page-layout { flex-direction: column; }
-  .map-col { display: none; /* Hide map on mobile/tablet like many sites */ }
-  .list-card { height: auto; flex-direction: column; }
-  .lc-image { width: 100%; height: 160px; }
-  .lc-price-col { width: 100%; border-left: none; border-top: 1px solid #eee; flex-direction: row; justify-content: space-between; }
-  .book-now-small { width: auto; }
-}
-#root {
-  max-width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  text-align: left;
-}
-
-body {
-  display: block !important;
-  width: 100% !important;
-  min-width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #fff;
-  color: #333;
-}
-
-* { box-sizing: border-box; }
-
-.page-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-height: 100vh;
-}
-
 /* --- HEADER --- */
 .site-header {
   background-color: #1a1a1a;
@@ -1748,4 +1706,454 @@ body {
   .gallery-section { flex-direction: column; height: auto; }
   .room-card { flex-direction: column; }
   .room-card-image { width: 100%; }
+}
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  z-index: 20;
+}
+
+.suggestion-item {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background: #f5f5f5;
+}
+
+.suggestion-main {
+  font-weight: 500;
+}
+
+.suggestion-sub {
+  font-size: 12px;
+  color: #666;
+}
+
+/* hotel details */
+/* Add this to your existing CSS file */
+
+.hotel-page-wrapper {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px 20px 40px;
+}
+
+.details-header-container {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.details-header-container h1 {
+  font-size: 42px;
+  font-weight: 700;
+}
+
+.details-header-container p {
+  font-size: 16px;
+  color: #555;
+}
+.hotel-photo-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+.hotel-main-photo {
+  height: 420px;
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+.hotel-main-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .35s ease;
+}
+.hotel-main-photo:hover img {
+  transform: scale(1.05);
+}
+.hotel-side-photos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.hotel-thumb {
+  height: 200px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.hotel-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .35s ease;
+}
+
+.hotel-thumb:hover img {
+  transform: scale(1.07);
+}
+.show-more-tile {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  border-radius: 14px;
+  opacity: 0;
+  transition: .25s ease;
+}
+
+.hotel-thumb:hover .show-more-tile {
+  opacity: 1;
+}
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+.room-card {
+  display: flex;
+  border: 1px solid #e4e4e4;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  min-height: 200px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+}
+.room-image-col {
+  width: 260px;
+  position: relative;
+}
+
+.room-image-wrapper {
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.room-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .35s ease;
+}
+
+.room-image-wrapper:hover img {
+  transform: scale(1.08);
+}
+
+.room-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: #fff;
+  opacity: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 8px;
+  transition: .25s ease;
+}
+
+.room-image-wrapper:hover .room-photo-overlay {
+  opacity: 1;
+}
+.room-info-col {
+  flex: 1;
+  padding: 20px;
+  border-right: 1px solid #eee;
+}
+.room-info-col h3 {
+  margin: 0 0 10px;
+  color: #0071c2;
+}
+.room-amenities-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.room-badge {
+  background: #f2f4f7;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.room-amenities-toggle {
+  color: #0066cc;
+  border: none;
+  background: none;
+  cursor: pointer;
+  margin-top: 8px;
+  font-size: 13px;
+}
+.room-price-col {
+  width: 180px;
+  background: #fafafa;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: right;
+}
+
+.price-tag {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.tax-info {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.book-btn {
+  margin-top: 12px;
+  padding: 10px 15px;
+  width: 100%;
+  border-radius: 6px;
+  background: #0071c2;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+.book-btn:hover {
+  background: #005fa3;
+}
+/* FULLSCREEN BACKDROP */
+/* FULLSCREEN OVERLAY */
+.gallery-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+}
+
+/* MODAL */
+.gallery-modal {
+  background: white;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 900px;            /* prevent super-wide modal */
+  padding: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* CLOSE BUTTON */
+.gallery-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  padding: 6px 12px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* TITLE */
+.gallery-title {
+  margin: 10px 0 15px;
+  text-align: left;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* IMAGE CONTAINER */
+.gallery-image-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* MAIN IMAGE FIX */
+.gallery-main {
+  width: 100%;
+  height: auto;
+  max-height: 65vh;             /* prevent going off screen */
+  object-fit: contain;          /* FIX BLACK AREAS */
+  border-radius: 10px;
+}
+
+/* ARROWS FIX */
+.gallery-arrow {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  font-size: 40px;
+  background: rgba(0,0,0,0.4);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 70px;
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-arrow.left {
+  left: -25px;
+}
+
+.gallery-arrow.right {
+  right: -25px;
+}
+
+/* THUMBNAILS FIX */
+.gallery-thumbs {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.gallery-thumbs img {
+  width: 90px;
+  height: 70px;
+  border-radius: 6px;
+  object-fit: cover;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.gallery-thumbs img.active {
+  opacity: 1;
+  border: 2px solid #0071c2;
+}
+
+@media (max-width: 600px) {
+  .room-card {
+    flex-direction: column;
+  }
+  .room-image-col {
+    width: 100%;
+    height: 220px;
+  }
+  .room-price-col {
+    width: 100%;
+    text-align: left;
+  }
+}
+/* --- PRICE COLUMN --- */
+/* --- PRICE COLUMN --- */
+.room-price-col {
+  width: 220px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  background: #f8fafd;
+  border-left: 1px solid #e3e3e3;
+}
+
+/* Current price (bold, big) */
+.price-current {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+/* Old strike-through price */
+.price-old {
+  font-size: 14px;
+  color: #999;
+  text-decoration: line-through;
+  margin-left: 8px;
+}
+
+/* Per night small text */
+.price-night {
+  font-size: 14px;
+  color: #444;
+  margin-left: 5px;
+}
+
+/* Taxes included line */
+.price-tax-info {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #008009;
+  font-weight: 600;
+}
+
+/* Total price section */
+.price-total {
+  font-size: 15px;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* Free cancellation / Non-refundable tags */
+.tag-good {
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: #e7f5e9;
+  color: #008009;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tag-bad {
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: #ffe8e5;
+  color: #d93025;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* BOOK button */
+.book-btn {
+  margin-top: 14px;
+  background: #0071c2;
+  color: #fff;
+  border: none;
+  padding: 12px 18px;
+  width: 100%;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.book-btn:hover {
+  background: #005999;
 }

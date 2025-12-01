@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import { useNavigate } from "react-router-dom";
+import { fetchLocationSuggestions } from "./api/zentrum";  // NEW
 
 const otherCities = [
   "Honolulu Hotels", "Miami Beach Hotels", "Reno Hotels", "Memphis Hotels",
@@ -31,6 +32,10 @@ const destinations = [
   { id: 7, name: "Nashville", count: "176 hotels available", image: "https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?q=80&w=800&auto=format&fit=crop" },
   { id: 8, name: "Boston", count: "73 hotels available", image: "https://plus.unsplash.com/premium_photo-1694475434235-12413ec38b3e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
 ];
+// const [destination, setDestination] = useState("");
+// const [suggestions, setSuggestions] = useState([]);
+// const [showSuggestions, setShowSuggestions] = useState(false);
+// const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
  
 // ---------- Date helpers ----------
@@ -240,15 +245,89 @@ export default function Dashboard() {
   const [rooms, setRooms] = useState(1);
   const [adults, setAdults] = useState(2);
   const [kids, setKids] = useState(0);
+  
+  const [destination, setDestination] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [selectedLocationObj, setSelectedLocationObj] = useState(null);      //chnaged
 
+  const handleDestinationChange = async (e) => {
+  const value = e.target.value;
+  setDestination(value);
+
+  if (value.length < 2) {
+    setSuggestions([]);
+    setShowSuggestions(false);
+    return;
+  }
+
+  try {
+    setLoadingSuggestions(true);
+    const data = await fetchLocationSuggestions(value);
+
+    // --- DEBUGGING: See exactly what the API gives you ---
+    console.log("API Response:", data); 
+
+    let list = [];
+    
+    // --- FIX: Check for the CORRECT key from your API logs ---
+    if (data && Array.isArray(data.locationSuggestions)) {
+      list = data.locationSuggestions;
+    }
+    // Fallback: Check if API returned the array directly
+    else if (Array.isArray(data)) {
+      list = data;
+    } 
+    // Fallback: Check for other common keys
+    else if (data && Array.isArray(data.locations)) {
+      list = data.locations;
+    }
+    else if (data && Array.isArray(data.suggestions)) {
+      list = data.suggestions;
+    }
+    
+    // Always ensure we set an array, never an object
+    setSuggestions(list);
+    setShowSuggestions(true);
+    
+  } catch (err) {
+    console.error("Autosuggest error:", err);
+    setSuggestions([]); // Safety fallback
+  } finally {
+    setLoadingSuggestions(false);
+  }
+};
+
+const handleSelectSuggestion = (item) => {
+  const label = item.fullName || item.name || "";
+  setDestination(label);
+   setSelectedLocationObj(item);   // store full object
+  setSelectedLocationObj(item); // <--- SAVE THE WHOLE OBJECT
+  setShowSuggestions(false);
+};                    //chnaged
   const handleRangeChange = (start, end) => {
     setCheckIn(start);
     setCheckOut(end);
   };
 
    const handleFindRooms = () => {
-    navigate("/hotels");
-  };                                            //changed 
+  if (!checkIn || !checkOut || !selectedLocationObj) {
+    alert("Please select a destination and dates");
+    return;
+  }
+
+  navigate("/hotels", {
+    state: {
+      destination: selectedLocationObj, // Contains the ID
+      checkIn: checkIn,
+      checkOut: checkOut,
+      rooms,
+      adults,
+      kids
+    }
+  });
+};                                          //changed now
 
   const performLogin = () => {
     setIsLoggedIn(true);
@@ -302,10 +381,65 @@ export default function Dashboard() {
       {/* 3. SEARCH BAR */}
       <div className="search-bar-wrapper">
         <div className="search-bar">
-          <div className="sb-field destination-field">
-            <label>Destination</label>
-            <input type="text" placeholder="Where are you going?" />
+          <div className="sb-field destination-field" style={{ position: "relative" }}>
+  <label>Destination</label>
+
+  <input
+    type="text"
+    placeholder="Where are you going?"
+    value={destination}
+    onChange={handleDestinationChange}
+    onFocus={() => destination.length >= 2 && setShowSuggestions(true)}
+    onBlur={() => {
+      // Delay closing so click can register
+      setTimeout(() => setShowSuggestions(false), 150);
+    }}
+  />
+
+  {showSuggestions && (
+  <div className="suggestions-dropdown">
+    
+    {loadingSuggestions && (
+      <div className="suggestion-item">Loading...</div>
+    )}
+
+    {!loadingSuggestions && suggestions.length === 0 && (
+      <div className="suggestion-item">No matches found</div>
+    )}
+
+    {!loadingSuggestions &&
+      suggestions.map((item, idx) => (
+        <div
+          key={idx}
+          className="suggestion-item"
+          onMouseDown={() => handleSelectSuggestion(item)}
+        >
+          <div className="suggestion-main">
+            {item.displayName || item.cityName || item.name || item.label}
           </div>
+
+          {/* city */}
+          {item.cityId && (
+            <div className="suggestion-sub">
+              City · {item.country}
+            </div>
+          )}
+
+          {/* hotel */}
+          {item.hotelId && (
+            <div className="suggestion-sub">
+              Hotel · {item.cityName}, {item.country}
+            </div>        )}
+
+            {item.country && (
+              <div className="suggestion-sub">{item.country}</div>
+            )}
+          </div>
+        ))}
+    </div>
+  )}
+</div>
+
           <div className="sb-divider"></div>
 
           <div className="sb-field date-field" onClick={() => setCalendarOpen(!calendarOpen)}>
