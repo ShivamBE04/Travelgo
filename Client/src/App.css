@@ -2157,3 +2157,94 @@ body, html {
 .book-btn:hover {
   background: #005999;
 }
+
+/* HotelList.css */
+
+.page-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* 1. Centered Big Header */
+.main-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.main-header h1 {
+  font-size: 32px;
+  color: #222;
+  margin: 0;
+}
+
+/* Search Params Box */
+.search-summary-box {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-info {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Loader */
+.loader-status {
+  background-color: #e3f2fd;
+  color: #0071c2;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* 2. Results Count (Left Aligned) */
+.results-count-header {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.results-count-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Card Styles (Existing) */
+.hotel-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hotel-card-horizontal {
+  display: flex;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 220px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.card-left { width: 260px; flex-shrink: 0; }
+.card-left img { width: 100%; height: 100%; object-fit: cover; }
+
+.card-middle { flex: 1; padding: 15px; display: flex; flex-direction: column; }
+.card-title { margin: 0 0 5px 0; font-size: 18px; font-weight: 700; color: #0071c2; }
+.card-address { font-size: 13px; color: #555; margin-bottom: 5px; }
+.card-stars { color: #f5a623; margin-bottom: 10px; font-size: 14px; }
+.card-amenities span { font-size: 12px; color: #008009; margin-right: 10px; }
+
+.card-right { width: 220px; border-left: 1px solid #eee; padding: 15px; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; }
+.price-box { font-size: 24px; font-weight: 700; color: #333; margin-bottom: 10px; }
+.btn-book { background-color: #f0ad4e; color: white; border: none; border-radius: 4px; padding: 10px 0; width: 100%; font-weight: 700; cursor: pointer; }

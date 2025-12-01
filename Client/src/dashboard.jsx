@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import "./App.css";
 import { useNavigate } from "react-router-dom";
-import { fetchLocationSuggestions } from "./api/zentrum";  // NEW
+import { fetchLocationSuggestions } from "./api/zentrum";
+
+// ⭐ CHANGE ADDED
+import Header from "./components/Header";
 
 const otherCities = [
   "Honolulu Hotels", "Miami Beach Hotels", "Reno Hotels", "Memphis Hotels",
@@ -13,6 +16,7 @@ const otherCities = [
   "San Diego Hotels", "San Antonio Hotels", "Amsterdam Hotels", "Saint Louis Hotels",
   "Atlanta Hotels", "Dubai Hotels", "Atlantic City Hotels", "Charlotte Hotels"
 ];
+
 const featuredHotels = [
   { id: 1, name: "Golden Nugget Hotel & Casino Las Vegas", location: "Las Vegas, NV", image: "https://media.gettyimages.com/id/642047654/photo/glittering-facades-the-golden-nugget-and-binions-hotels-and-casinos-of-fremont-casino-in.jpg?s=612x612&w=0&k=20&c=mopvf0Z-l1JWlCplnchNTKoVwHSyMLETd9EXCK5hAPs=" },
   { id: 2, name: "Caesars Palace Las Vegas", location: "Las Vegas, NV", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=800" },
@@ -21,7 +25,7 @@ const featuredHotels = [
   { id: 5, name: "New York Hilton Midtown", location: "New York City, NY", image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=800" },
   { id: 6, name: "Tropicana Atlantic City", location: "Atlantic City, NJ", image: "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=800" }
 ];
-// --- DATA: Top Destinations (This was missing!) ---
+
 const destinations = [
   { id: 1, name: "Las Vegas", count: "177 hotels available", image: "https://images.unsplash.com/photo-1605833556294-ea5c7a74f57d?q=80&w=800&auto=format&fit=crop" },
   { id: 2, name: "Chicago", count: "154 hotels available", image: "https://images.unsplash.com/photo-1494522855154-9297ac14b55f?q=80&w=800&auto=format&fit=crop" },
@@ -32,13 +36,8 @@ const destinations = [
   { id: 7, name: "Nashville", count: "176 hotels available", image: "https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?q=80&w=800&auto=format&fit=crop" },
   { id: 8, name: "Boston", count: "73 hotels available", image: "https://plus.unsplash.com/premium_photo-1694475434235-12413ec38b3e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
 ];
-// const [destination, setDestination] = useState("");
-// const [suggestions, setSuggestions] = useState([]);
-// const [showSuggestions, setShowSuggestions] = useState(false);
-// const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
- 
-// ---------- Date helpers ----------
+// ---------- HELPERS ----------
 function addMonths(date, months) {
   const d = new Date(date);
   d.setMonth(d.getMonth() + months);
@@ -72,10 +71,10 @@ function getMonthDays(year, month) {
   const days = [];
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
-  const startWeekDay = firstDay.getDay(); 
+  const startWeekDay = firstDay.getDay();
 
   for (let i = 0; i < startWeekDay; i++) {
-    days.push(null); 
+    days.push(null);
   }
   for (let d = 1; d <= lastDay.getDate(); d++) {
     days.push(new Date(year, month, d));
@@ -83,13 +82,13 @@ function getMonthDays(year, month) {
   return days;
 }
 
-// ---------- Calendar Popup Component ----------
+// ---------- CalendarPopup ----------
 function CalendarPopup({ open, onClose, checkIn, checkOut, onChangeRange }) {
   const today = new Date();
   const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const maxDate = addMonths(minDate, 12);
 
-  const [startMonthOffset, setStartMonthOffset] = useState(0); 
+  const [startMonthOffset, setStartMonthOffset] = useState(0);
 
   const firstMonthDate = addMonths(minDate, startMonthOffset);
   const secondMonthDate = addMonths(minDate, startMonthOffset + 1);
@@ -168,10 +167,10 @@ function CalendarPopup({ open, onClose, checkIn, checkOut, onChangeRange }) {
   );
 }
 
-// ---------- LOGIN MODAL COMPONENT ----------
+// ---------- Login Modal ----------
 function LoginModal({ isOpen, onClose, onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
-  
+
   if (!isOpen) return null;
 
   return (
@@ -235,142 +234,111 @@ function LoginModal({ isOpen, onClose, onLogin }) {
 
 // ---------- MAIN DASHBOARD ----------
 export default function Dashboard() {
-    const navigate = useNavigate();                    // changed//
+  const navigate = useNavigate();
   const [checkIn, setCheckIn] = useState(null);
   const [checkOut, setCheckOut] = useState(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+
   const [rooms, setRooms] = useState(1);
   const [adults, setAdults] = useState(2);
   const [kids, setKids] = useState(0);
-  
+
   const [destination, setDestination] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-  const [selectedLocationObj, setSelectedLocationObj] = useState(null);      //chnaged
+  const [selectedLocationObj, setSelectedLocationObj] = useState(null);
 
   const handleDestinationChange = async (e) => {
-  const value = e.target.value;
-  setDestination(value);
+    const value = e.target.value;
+    setDestination(value);
 
-  if (value.length < 2) {
-    setSuggestions([]);
+    if (value.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    try {
+      setLoadingSuggestions(true);
+      const data = await fetchLocationSuggestions(value);
+
+      console.log("API Response:", data);
+
+      let list = [];
+
+      if (data && Array.isArray(data.locationSuggestions)) {
+        list = data.locationSuggestions;
+      } else if (Array.isArray(data)) {
+        list = data;
+      } else if (data && Array.isArray(data.locations)) {
+        list = data.locations;
+      } else if (data && Array.isArray(data.suggestions)) {
+        list = data.suggestions;
+      }
+
+      setSuggestions(list);
+      setShowSuggestions(true);
+    } catch (err) {
+      console.error("Autosuggest error:", err);
+      setSuggestions([]);
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
+
+  const handleSelectSuggestion = (item) => {
+    const label = item.fullName || item.name || "";
+    setDestination(label);
+    setSelectedLocationObj(item);
     setShowSuggestions(false);
-    return;
-  }
+  };
 
-  try {
-    setLoadingSuggestions(true);
-    const data = await fetchLocationSuggestions(value);
-
-    // --- DEBUGGING: See exactly what the API gives you ---
-    console.log("API Response:", data); 
-
-    let list = [];
-    
-    // --- FIX: Check for the CORRECT key from your API logs ---
-    if (data && Array.isArray(data.locationSuggestions)) {
-      list = data.locationSuggestions;
-    }
-    // Fallback: Check if API returned the array directly
-    else if (Array.isArray(data)) {
-      list = data;
-    } 
-    // Fallback: Check for other common keys
-    else if (data && Array.isArray(data.locations)) {
-      list = data.locations;
-    }
-    else if (data && Array.isArray(data.suggestions)) {
-      list = data.suggestions;
-    }
-    
-    // Always ensure we set an array, never an object
-    setSuggestions(list);
-    setShowSuggestions(true);
-    
-  } catch (err) {
-    console.error("Autosuggest error:", err);
-    setSuggestions([]); // Safety fallback
-  } finally {
-    setLoadingSuggestions(false);
-  }
-};
-
-const handleSelectSuggestion = (item) => {
-  const label = item.fullName || item.name || "";
-  setDestination(label);
-   setSelectedLocationObj(item);   // store full object
-  setSelectedLocationObj(item); // <--- SAVE THE WHOLE OBJECT
-  setShowSuggestions(false);
-};                    //chnaged
   const handleRangeChange = (start, end) => {
     setCheckIn(start);
     setCheckOut(end);
   };
 
-   const handleFindRooms = () => {
-  if (!checkIn || !checkOut || !selectedLocationObj) {
-    alert("Please select a destination and dates");
-    return;
-  }
-
-  navigate("/hotels", {
-    state: {
-      destination: selectedLocationObj, // Contains the ID
-      checkIn: checkIn,
-      checkOut: checkOut,
-      rooms,
-      adults,
-      kids
+  const handleFindRooms = () => {
+    if (!checkIn || !checkOut || !selectedLocationObj) {
+      alert("Please select a destination and dates");
+      return;
     }
-  });
-};                                          //changed now
+
+    navigate("/hotels", {
+      state: {
+        destination: selectedLocationObj,
+        checkIn: checkIn,
+        checkOut: checkOut,
+        rooms,
+        adults,
+        kids
+      }
+    });
+  };
 
   const performLogin = () => {
     setIsLoggedIn(true);
     setIsLoginOpen(false);
     alert("Logged in successfully!");
   };
-  
 
   return (
     <div className="page-container">
+
+      {/* ⭐ CHANGE ADDED */}
+      <Header isLoggedIn={isLoggedIn} setIsLoginOpen={setIsLoginOpen} />
+
       {/* Login Modal */}
-      <LoginModal 
-        isOpen={isLoginOpen} 
-        onClose={() => setIsLoginOpen(false)} 
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
         onLogin={performLogin}
       />
 
-      {/* 1. TOP HEADER */}
-      <header className="site-header">
-        <div className="header-content">
-          <div className="logo-section">
-            <span className="logo-icon">🏯</span>
-            <div className="brand-name">
-              <span>Beyond Trips</span>
-              <span className="brand-sub">An independent travel network</span>
-            </div>
-          </div>
-          
-          <nav className="top-nav">
-            <a href="#">Travel Guides</a>
-            <a href="#">My Booking</a>
-            <div className="nav-divider"></div>
-            
-            {isLoggedIn ? (
-               <span className="user-greeting">Hi, Traveler</span>
-            ) : (
-               <span className="login-link" onClick={() => setIsLoginOpen(true)}>LOGIN</span>
-            )}
-          </nav>
-        </div>
-      </header>
-
-      {/* 2. INTRO SECTION */}
+      {/* ---------- INTRO SECTION ---------- */}
       <section className="intro-section">
         <div className="intro-text">
           <h1>Book your perfect trip</h1>
@@ -378,67 +346,62 @@ const handleSelectSuggestion = (item) => {
         </div>
       </section>
 
-      {/* 3. SEARCH BAR */}
+      {/* ---------- SEARCH BAR ---------- */}
       <div className="search-bar-wrapper">
         <div className="search-bar">
           <div className="sb-field destination-field" style={{ position: "relative" }}>
-  <label>Destination</label>
+            <label>Destination</label>
 
-  <input
-    type="text"
-    placeholder="Where are you going?"
-    value={destination}
-    onChange={handleDestinationChange}
-    onFocus={() => destination.length >= 2 && setShowSuggestions(true)}
-    onBlur={() => {
-      // Delay closing so click can register
-      setTimeout(() => setShowSuggestions(false), 150);
-    }}
-  />
+            <input
+              type="text"
+              placeholder="Where are you going?"
+              value={destination}
+              onChange={handleDestinationChange}
+              onFocus={() => destination.length >= 2 && setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+            />
 
-  {showSuggestions && (
-  <div className="suggestions-dropdown">
-    
-    {loadingSuggestions && (
-      <div className="suggestion-item">Loading...</div>
-    )}
+            {showSuggestions && (
+              <div className="suggestions-dropdown">
+                {loadingSuggestions && (
+                  <div className="suggestion-item">Loading...</div>
+                )}
 
-    {!loadingSuggestions && suggestions.length === 0 && (
-      <div className="suggestion-item">No matches found</div>
-    )}
+                {!loadingSuggestions && suggestions.length === 0 && (
+                  <div className="suggestion-item">No matches found</div>
+                )}
 
-    {!loadingSuggestions &&
-      suggestions.map((item, idx) => (
-        <div
-          key={idx}
-          className="suggestion-item"
-          onMouseDown={() => handleSelectSuggestion(item)}
-        >
-          <div className="suggestion-main">
-            {item.displayName || item.cityName || item.name || item.label}
-          </div>
+                {!loadingSuggestions &&
+                  suggestions.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="suggestion-item"
+                      onMouseDown={() => handleSelectSuggestion(item)}
+                    >
+                      <div className="suggestion-main">
+                        {item.displayName || item.cityName || item.name || item.label}
+                      </div>
 
-          {/* city */}
-          {item.cityId && (
-            <div className="suggestion-sub">
-              City · {item.country}
-            </div>
-          )}
+                      {item.cityId && (
+                        <div className="suggestion-sub">
+                          City · {item.country}
+                        </div>
+                      )}
 
-          {/* hotel */}
-          {item.hotelId && (
-            <div className="suggestion-sub">
-              Hotel · {item.cityName}, {item.country}
-            </div>        )}
+                      {item.hotelId && (
+                        <div className="suggestion-sub">
+                          Hotel · {item.cityName}, {item.country}
+                        </div>
+                      )}
 
-            {item.country && (
-              <div className="suggestion-sub">{item.country}</div>
+                      {item.country && (
+                        <div className="suggestion-sub">{item.country}</div>
+                      )}
+                    </div>
+                  ))}
+              </div>
             )}
           </div>
-        ))}
-    </div>
-  )}
-</div>
 
           <div className="sb-divider"></div>
 
@@ -450,38 +413,42 @@ const handleSelectSuggestion = (item) => {
               </div>
             </div>
           </div>
+
           <div className="sb-divider"></div>
 
           <div className="sb-field date-field" onClick={() => setCalendarOpen(!calendarOpen)}>
-             <div className="date-group">
+            <div className="date-group">
               <label>Check-out:</label>
               <div className="date-value">
                 {checkOut ? formatDateDisplay(checkOut) : "Add date"} 📅
               </div>
             </div>
           </div>
+
           <div className="sb-divider"></div>
 
           <div className="sb-field select-field">
             <label>Rooms:</label>
             <select value={rooms} onChange={(e) => setRooms(e.target.value)}>
-              {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
+              {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
+
           <div className="sb-divider"></div>
 
           <div className="sb-field select-field">
             <label>Adults:</label>
             <select value={adults} onChange={(e) => setAdults(e.target.value)}>
-              {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n}</option>)}
+              {[1, 2, 3, 4, 5, 6].map(n => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
+
           <div className="sb-divider"></div>
 
           <div className="sb-field select-field">
             <label>Kids:</label>
             <select value={kids} onChange={(e) => setKids(e.target.value)}>
-              {[0,1,2,3,4].map(n => <option key={n} value={n}>{n}</option>)}
+              {[0, 1, 2, 3, 4].map(n => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
 
@@ -490,8 +457,8 @@ const handleSelectSuggestion = (item) => {
           </button>
 
           <div className="calendar-anchor">
-            <CalendarPopup 
-              open={calendarOpen} 
+            <CalendarPopup
+              open={calendarOpen}
               onClose={() => setCalendarOpen(false)}
               checkIn={checkIn}
               checkOut={checkOut}
@@ -501,12 +468,12 @@ const handleSelectSuggestion = (item) => {
         </div>
       </div>
 
-      {/* 4. HERO IMAGE */}
+      {/* HERO IMAGE */}
       <div className="hero-image">
-         <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4" alt="Mountains" />
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4" alt="Mountains" />
       </div>
-      
-      {/* 5. TOP DESTINATIONS SECTION */}
+
+      {/* TOP DESTINATIONS */}
       <section className="destinations-section">
         <div className="section-header">
           <h2>Top Destinations</h2>
@@ -528,13 +495,14 @@ const handleSelectSuggestion = (item) => {
           ))}
         </div>
       </section>
-      {/* 7. FEATURED HOTELS */}
+
+      {/* FEATURED HOTELS */}
       <section className="featured-section">
         <div className="section-header">
           <h2>Featured Hotels</h2>
           <p>Trending properties from around the world</p>
         </div>
-        
+
         <div className="featured-grid">
           {featuredHotels.map((hotel) => (
             <div key={hotel.id} className="featured-card">
@@ -547,7 +515,8 @@ const handleSelectSuggestion = (item) => {
           ))}
         </div>
       </section>
-      {/* 8. HOTELS IN OTHER CITIES SECTION */}
+
+      {/* OTHER CITIES */}
       <section className="other-cities-section">
         <div className="cities-header">
           <h2>Hotels in Other Top Cities</h2>
@@ -563,11 +532,10 @@ const handleSelectSuggestion = (item) => {
           ))}
         </div>
       </section>
-      {/* 9. FOOTER SECTION */}
+
+      {/* FOOTER */}
       <footer className="site-footer">
         <div className="footer-top">
-          
-          {/* Left Side: Brand & Socials */}
           <div className="footer-brand-col">
             <div className="footer-logo">
               <span className="footer-icon">🏯</span>
@@ -576,8 +544,7 @@ const handleSelectSuggestion = (item) => {
                 <span className="f-brand-sub">An independent travel network</span>
               </div>
             </div>
-            
-            {/* Social Icons (using text placeholders for simplicity) */}
+
             <div className="social-icons">
               <span className="s-icon">f</span>
               <span className="s-icon">🐦</span>
@@ -587,7 +554,6 @@ const handleSelectSuggestion = (item) => {
             </div>
           </div>
 
-          {/* Right Side: Links Columns */}
           <div className="footer-links-group">
             <div className="footer-col">
               <h4>Learn more</h4>
@@ -618,13 +584,11 @@ const handleSelectSuggestion = (item) => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="footer-bottom">
           <div className="copyright">Copyright 2025 Beyond Trips™.</div>
           <div className="disclaimer">Beyond Trips™ is an independent travel network offering over 100,000 hotels worldwide.</div>
         </div>
       </footer>
-
 
     </div>
   );

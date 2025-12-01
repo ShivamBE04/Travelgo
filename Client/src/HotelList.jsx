@@ -1,36 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";   // ✅ UPDATED
+import React, { useEffect, useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./App.css";
+import "./App.css"; 
 
 const HotelList = () => {
   const location = useLocation();
-  const navigate = useNavigate();   // ✅ ADDED
-
+  const navigate = useNavigate();
   const { destination, checkIn, checkOut, rooms, adults, kids } = location.state || {};
 
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("Initializing search...");
+  
+  // Prevent double-firing in strict mode
+  const searchStarted = useRef(false);
 
   useEffect(() => {
-    if (destination) {
+    if (destination && !searchStarted.current) {
+      searchStarted.current = true;
       startHotelSearch();
     }
   }, []);
 
-  // 🔵 NEW: Navigate with hotel data + search params
-  const handleViewDeal = (hotel) => {
-    navigate(`/hotel/${hotel.id}`, {
-      state: {
-        hotelData: hotel,
-        searchParams: { checkIn, checkOut, rooms, adults, kids }
-      }
-    });
-  };
-
-  // --- 1. DATA MAPPING HELPERS ---
-
+  // --- HELPERS ---
   const getHotelImage = (hotel) => {
     const img = hotel.heroImage || hotel.image || hotel.thumbnail;
     if (img) return img;
@@ -39,18 +31,19 @@ const HotelList = () => {
 
   const getAddress = (hotel) => {
     const addr = hotel.contact?.address || hotel.address;
-    if (typeof addr === "object") {
+    if (typeof addr === 'object') {
       const line1 = addr.line1 || addr.address1 || "";
       const city = addr.city?.name || addr.city || "";
       return `${line1}, ${city}`;
     }
-    return addr || destination?.name || "View details for address";
+    return addr || destination?.name || "City Center";
   };
 
   const getPrice = (hotel) => {
     if (hotel.minRate) return Math.round(hotel.minRate);
-    if (hotel.rates?.length > 0)
+    if (hotel.rates && hotel.rates.length > 0) {
       return Math.round(hotel.rates[0].rate || hotel.rates[0].net || 0);
+    }
     return null;
   };
 
@@ -59,23 +52,27 @@ const HotelList = () => {
     return "★".repeat(count);
   };
 
-  // --- 2. SEARCH FUNCTIONS ---
+  const handleViewDeal = (hotel) => {
+    navigate(`/hotel/${hotel.id}`, {
+      state: { 
+        hotelData: hotel, 
+        searchParams: { checkIn, checkOut, rooms, adults, kids }
+      }
+    });
+  };
 
+  // --- SEARCH LOGIC ---
   const startHotelSearch = async () => {
     try {
-      setStatus("Contacting server...");
+      setStatus("Finding best hotels for you...");
       const initRes = await axios.post("http://localhost:5000/api/hotels/search/init", {
-        destination,
-        checkIn,
-        checkOut,
-        rooms,
-        adults,
-        kids,
+        destination, checkIn, checkOut, rooms, adults, kids
       });
 
       const token = initRes.data.token || initRes.data.asyncToken;
-      if (token) pollResults(token);
-      else {
+      if (token) {
+        pollResults(token);
+      } else {
         alert("Could not start search.");
         setLoading(false);
       }
@@ -85,79 +82,96 @@ const HotelList = () => {
     }
   };
 
-  const pollResults = async (token) => {
+  const pollResults = async (token, attempt = 1) => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/hotels/search/result/${token}`
-      );
-
-      if (res.data.hotels?.length > 0) {
-        console.log("First Hotel Data:", res.data.hotels[0]);
+      const res = await axios.get(`http://localhost:5000/api/hotels/search/result/${token}`);
+      
+      if (res.data.hotels && res.data.hotels.length > 0) {
         setHotels(res.data.hotels);
-        setLoading(false);
+        // Don't stop loading yet if still in progress, just update list
       }
 
-      if (res.data.status !== "Completed") {
-        setStatus(`Found ${res.data.hotels?.length || 0} hotels...`);
-        setTimeout(() => pollResults(token), 2000);
+      const isComplete = res.data.status === "Completed" || res.data.completed === true;
+
+      if (!isComplete && attempt < 30) {
+        const count = res.data.completedHotelCount || res.data.hotels?.length || 0;
+        setStatus(`Finding best hotels for you... (${count} found)`);
+        
+        setTimeout(() => pollResults(token, attempt + 1), 2000);
       } else {
-        setStatus("Search Completed");
+        // STOP: Search is done
+        setStatus("Search Completed"); // This string triggers the removal of the loader
         setLoading(false);
       }
     } catch (err) {
       console.error(err);
+      setLoading(false);
     }
   };
 
-  // --- 3. RENDER UI ---
-
   return (
     <div className="page-wrapper">
-      <div className="search-summary">
-        <h1>{hotels.length} hotels available in {destination?.name}</h1>
-        <p className="date-range">
-          {new Date(checkIn).toDateString()} — {new Date(checkOut).toDateString()}
-        </p>
-        {loading && <div className="loader-status">🔄 {status}</div>}
+      
+      {/* 1. CENTERED DESTINATION HEADER */}
+      <div className="main-header">
+        <h1>{destination?.fullName || destination?.name || "Destination"}</h1>
       </div>
 
+      {/* 2. SEARCH SUMMARY BAR (Dates, etc.) */}
+      <div className="search-summary-box">
+         <div className="search-info">
+            <strong>Check-in:</strong> {new Date(checkIn).toDateString().slice(4)} &nbsp;|&nbsp; 
+            <strong>Check-out:</strong> {new Date(checkOut).toDateString().slice(4)} &nbsp;|&nbsp; 
+            <strong>Guests:</strong> {adults} Adults, {kids} Kids
+         </div>
+      </div>
+
+      {/* 3. LOADER (Only visible while searching) */}
+    {/* Only show loader if we haven't found any hotels yet */}
+{status !== "Search Completed" && hotels.length === 0 && (
+   <div className="loader-status">
+     <span className="spinner">🔄</span> {status}
+   </div>
+)}
+
+      {/* 4. RESULTS COUNT (Aligned Left) */}
+      {hotels.length > 0 && (
+        <div className="results-count-header">
+          <h2>{hotels.length} {destination?.name} hotels available</h2>
+        </div>
+      )}
+
+      {/* 5. HOTEL LIST */}
       <div className="hotel-results-list">
         {hotels.map((hotel, index) => {
           const price = getPrice(hotel);
-
+          
           return (
             <div key={index} className="hotel-card-horizontal">
-
-              {/* LEFT: IMAGE */}
               <div className="card-left">
-                <img
-                  src={getHotelImage(hotel)}
-                  alt={hotel.name}
-                  onClick={() => handleViewDeal(hotel)}     // ✅ ADDED
-                  style={{ cursor: "pointer" }}              // ✅ ADDED
-                  onError={(e) =>
-                    (e.target.src =
-                      "https://via.placeholder.com/300x200?text=Image+Error")
-                  }
+                <img 
+                  src={getHotelImage(hotel)} 
+                  alt={hotel.name} 
+                  onClick={() => handleViewDeal(hotel)}
+                  style={{cursor: 'pointer'}}
+                  onError={(e) => e.target.src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=400&auto=format&fit=crop"}
                 />
               </div>
 
-              {/* MIDDLE */}
               <div className="card-middle">
-                <h3 className="card-title">{hotel.name}</h3>
+                <h3 className="card-title" onClick={() => handleViewDeal(hotel)} style={{cursor: 'pointer'}}>
+                  {hotel.name}
+                </h3>
+                <div className="card-address">📍 {getAddress(hotel)}</div>
                 <div className="card-stars">{renderStars(hotel.starRating)}</div>
-
-                <div className="card-address">{getAddress(hotel)}</div>
-
+                
                 <div className="card-amenities">
                   <span>📶 Free WiFi</span>
                   <span>❄️ AC</span>
+                  <span>🛁 Private Bath</span>
                 </div>
-
-                <div className="more-amenities">More amenities</div>
               </div>
 
-              {/* RIGHT */}
               <div className="card-right">
                 {price ? (
                   <div className="price-box">
@@ -167,15 +181,10 @@ const HotelList = () => {
                 ) : (
                   <div className="price-box-check">Check Rates</div>
                 )}
-
-                <button
-                  className="btn-book"
-                  onClick={() => handleViewDeal(hotel)}   // ✅ ADDED
-                >
+                <button className="btn-book" onClick={() => handleViewDeal(hotel)}>
                   BOOK NOW
                 </button>
               </div>
-
             </div>
           );
         })}
