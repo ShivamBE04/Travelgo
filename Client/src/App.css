@@ -2248,3 +2248,26 @@ body, html {
 .card-right { width: 220px; border-left: 1px solid #eee; padding: 15px; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; }
 .price-box { font-size: 24px; font-weight: 700; color: #333; margin-bottom: 10px; }
 .btn-book { background-color: #f0ad4e; color: white; border: none; border-radius: 4px; padding: 10px 0; width: 100%; font-weight: 700; cursor: pointer; }
+.searchbar-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;       /* space between header and search bar */
+  margin-bottom: 20px;    /* space under search bar */
+}
+
+.search-bar {
+  width: 90%;
+  max-width: 1400px;
+  background: #fff;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+}
+.date-value {
+  display: flex;
+  align-items: center;
+  color: #1a5cff;   /* keeps the blue Add date text */
+  font-weight: 500;
+  cursor: pointer;
+}

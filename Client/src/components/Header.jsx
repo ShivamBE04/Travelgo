@@ -7,7 +7,7 @@ const Header = ({ isLoggedIn, setIsLoginOpen }) => {
         <div className="logo-section">
           <span className="logo-icon">🏯</span>
           <div className="brand-name">
-            <span>BeyondTrips</span>
+            <span>BEONTRIP</span>
             <span className="brand-sub">An independent travel network</span>
           </div>
         </div>

@@ -1,9 +1,7 @@
 const axios = require("axios");
 const crypto = require("crypto");
 
-// =========================================================
 // 1. AUTOSUGGEST
-// =========================================================
 const autosuggestLocation = async (req, res) => {
   try {
     const { term } = req.query;
@@ -18,33 +16,42 @@ const autosuggestLocation = async (req, res) => {
         "Content-Type": "application/json",
       },
     });
+    
+    // Helper: Format response for frontend
+    const rawList = response.data.locationSuggestions || [];
+    const formattedList = rawList.map(item => ({
+      id: item.id,
+      name: item.name,
+      fullName: item.fullName,
+      type: item.type, // 'Hotel', 'City', etc.
+      country: item.country,
+      coordinates: item.coordinates,
+      cityId: item.cityId,
+      hotelId: item.hotelId
+    }));
 
-    return res.json(response.data);
+    return res.json({ locationSuggestions: formattedList });
   } catch (err) {
-    console.error("Autosuggest error:", err.response?.data || err.message);
+    console.error("Autosuggest error:", err.message);
     return res.status(500).json({ message: "Autosuggest failed" });
   }
 };
 
-// =========================================================
-// 2. INIT HOTEL SEARCH
-// =========================================================
+// 2. INIT SEARCH (List of Hotels)
 const initHotelSearch = async (req, res) => {
   try {
     const { destination, checkIn, checkOut, rooms, adults, kids } = req.body;
     const format = (date) => new Date(date).toISOString().split('T')[0];
 
-    // Security Headers
-    const correlationId = crypto.randomUUID();
-    const customerIp = "127.0.0.1";
     const accountId = process.env.ZENTRUM_ACCOUNT_ID || "zentrum-demo-account";
     const channelId = process.env.ZENTRUM_CHANNEL_ID || "theobeglobal-sandbox";
+    const correlationId = crypto.randomUUID();
 
     if (!destination || !destination.coordinates) {
-      return res.status(400).json({ message: "Invalid destination: Missing coordinates" });
+      return res.status(400).json({ message: "Invalid destination coordinates" });
     }
 
-    // Prepare Payload
+    // Prepare Search Payload
     const payload = {
       channelId: channelId,
       currency: "USD",
@@ -59,13 +66,7 @@ const initHotelSearch = async (req, res) => {
       circularRegion: {
         centerLat: destination.coordinates.lat,
         centerLong: destination.coordinates.long,
-        radiusInKm: 30
-      },
-      searchLocationDetails: {
-        id: destination.id,
-        name: destination.name,
-        type: destination.type || "City",
-        coordinates: destination.coordinates
+        radiusInKm: 30 // Search 30km radius around the point (City OR Hotel)
       },
       nationality: "US",
       countryOfResidence: "US",
@@ -74,48 +75,41 @@ const initHotelSearch = async (req, res) => {
     };
 
     const url = `${process.env.ZENTRUM_SEARCH_URL}/availability/init`;
-    console.log(`DEBUG: Init Search -> Account: ${accountId}`);
-
     const response = await axios.post(url, payload, {
       headers: { 
         "apikey": process.env.ZENTRUM_API_KEY,
         "accountId": accountId,
         "channelId": channelId,
-        "customer-ip": customerIp,
+        "customer-ip": "127.0.0.1",
         "correlationId": correlationId,
         "Content-Type": "application/json"
       }
     });
 
     res.json(response.data); 
-
   } catch (error) {
-    console.error("INIT search error:", error.response?.data || error.message);
-    res.status(500).json({ message: "Search init failed", details: error.response?.data });
+    console.error("INIT error:", error.message);
+    res.status(500).json({ message: "Search init failed" });
   }
 };
 
-// =========================================================
-// 3. GET SEARCH RESULTS (List)
-// =========================================================
+// 3. GET SEARCH RESULTS
 const getHotelSearchResult = async (req, res) => {
   try {
     const { token } = req.params;
     const accountId = process.env.ZENTRUM_ACCOUNT_ID || "zentrum-demo-account";
     const channelId = process.env.ZENTRUM_CHANNEL_ID || "theobeglobal-sandbox";
 
-    // 1. Availability
+    // A. Availability
     const searchUrl = `${process.env.ZENTRUM_SEARCH_URL}/availability/async/${token}/results`;
-    const searchRes = await axios.get(searchUrl, {
-      headers: { "apikey": process.env.ZENTRUM_API_KEY }
-    });
+    const searchRes = await axios.get(searchUrl, { headers: { "apikey": process.env.ZENTRUM_API_KEY } });
 
     const availabilityData = searchRes.data;
     const hotelsFound = availabilityData.hotels || [];
 
     if (hotelsFound.length === 0) return res.json(availabilityData);
 
-    // 2. Content (Batch)
+    // B. Content (Images/Names)
     const hotelIds = hotelsFound.map(h => h.id);
     const contentUrl = "https://nexus.prod.zentrumhub.com/api/content/hotelcontent/getHotelContent";
     let enrichedHotels = hotelsFound;
@@ -144,7 +138,6 @@ const getHotelSearchResult = async (req, res) => {
 
       enrichedHotels = hotelsFound.map(h => {
         const details = contentMap[h.id] || {};
-        // Merge Logic
         return {
           ...h,
           name: details.name || h.name,
@@ -152,7 +145,7 @@ const getHotelSearchResult = async (req, res) => {
           address: details.contact?.address?.line1,
           city: details.contact?.address?.city?.name,
           starRating: details.starRating || h.starRating,
-          // Pass coordinates to frontend to avoid lookup later
+          // Pass coordinates to frontend
           coordinates: details.coordinates || h.geoCode || h.coordinates 
         };
       });
@@ -162,16 +155,13 @@ const getHotelSearchResult = async (req, res) => {
     }
 
     res.json({ ...availabilityData, hotels: enrichedHotels });
-
   } catch (error) {
     console.error("RESULT search error:", error.message);
     res.status(500).json({ message: "Search result failed" });
   }
 };
 
-// =========================================================
 // 4. GET SINGLE HOTEL DETAILS
-// =========================================================
 const getHotelDetails = async (req, res) => {
   try {
     const { hotelId } = req.params;
@@ -179,14 +169,12 @@ const getHotelDetails = async (req, res) => {
     const channelId = process.env.ZENTRUM_CHANNEL_ID || "theobeglobal-sandbox";
     
     const url = "https://nexus.prod.zentrumhub.com/api/content/hotelcontent/getHotelContent";
-    const payload = {
+    const response = await axios.post(url, {
       channelId: channelId,
       culture: "en-US",
       hotelIds: [hotelId],
       contentFields: ["All"]
-    };
-
-    const response = await axios.post(url, payload, {
+    }, {
       headers: {
         "apikey": process.env.ZENTRUM_API_KEY,
         "accountId": accountId,
@@ -201,45 +189,38 @@ const getHotelDetails = async (req, res) => {
     } else {
       res.status(404).json({ message: "Hotel details not found" });
     }
-
   } catch (error) {
     console.error("Details Fetch Error:", error.message);
     res.status(500).json({ message: "Failed to fetch hotel details" });
   }
 };
 
-// =========================================================
-// 5. GET ROOMS & RATES (Final)
-// =========================================================
+// 5. GET ROOMS & RATES
 const getRoomsAndRates = async (req, res) => {
   try {
     const { hotelId } = req.params;
     const { checkIn, checkOut, adults, kids, hotelLocation } = req.body;
-
     const format = (date) => new Date(date).toISOString().split('T')[0];
     const accountId = process.env.ZENTRUM_ACCOUNT_ID || "zentrum-demo-account";
     const channelId = process.env.ZENTRUM_CHANNEL_ID || "theobeglobal-sandbox";
-    const customerIp = "127.0.0.1";
     const correlationId = crypto.randomUUID();
 
     const commonHeaders = {
       "apikey": process.env.ZENTRUM_API_KEY,
       "accountId": accountId,
       "channelId": channelId,
-      "customer-ip": customerIp,
+      "customer-ip": "127.0.0.1",
       "correlationId": correlationId,
       "Content-Type": "application/json"
     };
 
     let centerLat, centerLong;
 
-    // 1. Determine Coordinates
+    // Use Frontend coords if available, otherwise fetch
     if (hotelLocation && (hotelLocation.lat || hotelLocation.latitude)) {
        centerLat = hotelLocation.lat || hotelLocation.latitude;
        centerLong = hotelLocation.long || hotelLocation.longitude;
     } else {
-       // Fallback to Content API
-       console.log(`DEBUG: Fetching coordinates for ${hotelId}`);
        const contentUrl = "https://nexus.prod.zentrumhub.com/api/content/hotelcontent/getHotelContent";
        const contentRes = await axios.post(contentUrl, {
          channelId: channelId, culture: "en-US", hotelIds: [hotelId], contentFields: ["Basic"]
@@ -253,11 +234,9 @@ const getRoomsAndRates = async (req, res) => {
        centerLong = locationObj.long;
     }
 
-    // 2. Initialize Room Search
-    console.log(`DEBUG: Init Room Search -> ${centerLat}, ${centerLong}`);
+    // Init Search for this specific hotel context
     const initUrl = `${process.env.ZENTRUM_SEARCH_URL}/availability/init`;
-    
-    const searchPayload = {
+    const initRes = await axios.post(initUrl, {
       channelId: channelId,
       currency: "USD",
       culture: "en-US",
@@ -278,18 +257,14 @@ const getRoomsAndRates = async (req, res) => {
       countryOfResidence: "US",
       destinationCountryCode: "US",
       travelPurpose: "Leisure"
-    };
+    }, { headers: commonHeaders });
 
-    const initRes = await axios.post(initUrl, searchPayload, { headers: commonHeaders });
     const token = initRes.data.token;
-    
-    // 3. Get Rooms
-    await new Promise(r => setTimeout(r, 1500)); // Wait for processing
+    await new Promise(r => setTimeout(r, 1000)); // Brief wait
 
     const roomsUrl = `${process.env.ZENTRUM_SEARCH_URL}/${hotelId}/roomsandrates/${token}`;
     const roomsRes = await axios.post(roomsUrl, { "searchSpecificProviders": false }, { headers: commonHeaders });
 
-    console.log(`DEBUG: Found ${roomsRes.data?.hotel?.rooms?.length || 0} rooms`);
     res.json(roomsRes.data);
 
   } catch (error) {

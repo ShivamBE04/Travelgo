@@ -1,28 +1,21 @@
 const express = require("express");
-// 1. IMPORT the new functions here
 const { 
   autosuggestLocation, 
   initHotelSearch, 
-  getHotelSearchResult ,
-   getHotelDetails,
-   getRoomsAndRates
+  getHotelSearchResult,
+  getHotelDetails,  // <--- Make sure this is imported
+  getRoomsAndRates  // <--- Make sure this is imported
 } = require("../controllers/hotelController.js");
 
 const router = express.Router();
 
-// --- Define your routes below ---
-
-// 1. Autosuggest (Existing)
+// --- Existing Routes ---
 router.get("/autosuggest", autosuggestLocation);
-
-// 2. Initialize Search (POST)
-// This matches: axios.post(".../api/hotels/search/init", ...)
 router.post("/search/init", initHotelSearch);
-
-// 3. Get Search Results (GET)
-// This matches: axios.get(".../api/hotels/search/result/{token}")
 router.get("/search/result/:token", getHotelSearchResult);
-router.get("/content/:hotelId", getHotelDetails); // New Route
-router.post("/rooms/:hotelId", getRoomsAndRates); // POST because we send dates
+
+// --- ✅ NEW ROUTES (These were missing/not active) ---
+router.get("/content/:hotelId", getHotelDetails);
+router.post("/rooms/:hotelId", getRoomsAndRates);
 
 module.exports = router;

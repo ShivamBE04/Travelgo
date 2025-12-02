@@ -3,8 +3,9 @@ import "./App.css";
 import { useNavigate } from "react-router-dom";
 import { fetchLocationSuggestions } from "./api/zentrum";
 
-// ⭐ CHANGE ADDED
+
 import Header from "./components/Header";
+import SearchBar from "./components/SearchBar";
 
 const otherCities = [
   "Honolulu Hotels", "Miami Beach Hotels", "Reno Hotels", "Memphis Hotels",
@@ -293,6 +294,8 @@ export default function Dashboard() {
     const label = item.fullName || item.name || "";
     setDestination(label);
     setSelectedLocationObj(item);
+    // ✅ CRITICAL: Save the full object so we know if it is a Hotel or City
+    setSelectedLocationObj(item);
     setShowSuggestions(false);
   };
 
@@ -301,24 +304,27 @@ export default function Dashboard() {
     setCheckOut(end);
   };
 
-  const handleFindRooms = () => {
+ const handleFindRooms = () => {
+    // 1. Validation
     if (!checkIn || !checkOut || !selectedLocationObj) {
       alert("Please select a destination and dates");
       return;
     }
 
+    // 2. ALWAYS Navigate to the Hotel List (/hotels)
+    // Whether it's a City or a specific Hotel, we want to show a list of results.
+    // The backend will use the 'coordinates' to find hotels in that area.
     navigate("/hotels", {
       state: {
-        destination: selectedLocationObj,
-        checkIn: checkIn,
-        checkOut: checkOut,
+        destination: selectedLocationObj, // Contains { id, name, type, coordinates }
+        checkIn,
+        checkOut,
         rooms,
         adults,
         kids
       }
     });
   };
-
   const performLogin = () => {
     setIsLoggedIn(true);
     setIsLoginOpen(false);
@@ -347,7 +353,7 @@ export default function Dashboard() {
       </section>
 
       {/* ---------- SEARCH BAR ---------- */}
-      <div className="search-bar-wrapper">
+      {/* <div className="search-bar-wrapper">
         <div className="search-bar">
           <div className="sb-field destination-field" style={{ position: "relative" }}>
             <label>Destination</label>
@@ -466,8 +472,33 @@ export default function Dashboard() {
             />
           </div>
         </div>
-      </div>
+      </div> */}
 
+<div className="searchbar-container">
+  <SearchBar
+  setShowSuggestions={setShowSuggestions} //
+    destination={destination}
+    setDestination={setDestination}
+    suggestions={suggestions}
+    showSuggestions={showSuggestions}
+    loadingSuggestions={loadingSuggestions}
+    handleDestinationChange={handleDestinationChange}
+    handleSelectSuggestion={handleSelectSuggestion}
+    calendarOpen={calendarOpen}
+    setCalendarOpen={setCalendarOpen}
+    checkIn={checkIn}
+    checkOut={checkOut}
+    formatDateDisplay={formatDateDisplay}
+    rooms={rooms}
+    adults={adults}
+    kids={kids}
+    setRooms={setRooms}
+    setAdults={setAdults}
+    setKids={setKids}
+    handleFindRooms={handleFindRooms}
+    handleRangeChange={handleRangeChange}
+  />
+</div>
       {/* HERO IMAGE */}
       <div className="hero-image">
         <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4" alt="Mountains" />
