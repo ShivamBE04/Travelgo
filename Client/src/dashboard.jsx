@@ -6,6 +6,8 @@ import { fetchLocationSuggestions } from "./api/zentrum";
 
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
+import Footer from "./components/Footer"; 
+
 
 const otherCities = [
   "Honolulu Hotels", "Miami Beach Hotels", "Reno Hotels", "Memphis Hotels",
@@ -352,127 +354,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* ---------- SEARCH BAR ---------- */}
-      {/* <div className="search-bar-wrapper">
-        <div className="search-bar">
-          <div className="sb-field destination-field" style={{ position: "relative" }}>
-            <label>Destination</label>
-
-            <input
-              type="text"
-              placeholder="Where are you going?"
-              value={destination}
-              onChange={handleDestinationChange}
-              onFocus={() => destination.length >= 2 && setShowSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-            />
-
-            {showSuggestions && (
-              <div className="suggestions-dropdown">
-                {loadingSuggestions && (
-                  <div className="suggestion-item">Loading...</div>
-                )}
-
-                {!loadingSuggestions && suggestions.length === 0 && (
-                  <div className="suggestion-item">No matches found</div>
-                )}
-
-                {!loadingSuggestions &&
-                  suggestions.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="suggestion-item"
-                      onMouseDown={() => handleSelectSuggestion(item)}
-                    >
-                      <div className="suggestion-main">
-                        {item.displayName || item.cityName || item.name || item.label}
-                      </div>
-
-                      {item.cityId && (
-                        <div className="suggestion-sub">
-                          City · {item.country}
-                        </div>
-                      )}
-
-                      {item.hotelId && (
-                        <div className="suggestion-sub">
-                          Hotel · {item.cityName}, {item.country}
-                        </div>
-                      )}
-
-                      {item.country && (
-                        <div className="suggestion-sub">{item.country}</div>
-                      )}
-                    </div>
-                  ))}
-              </div>
-            )}
-          </div>
-
-          <div className="sb-divider"></div>
-
-          <div className="sb-field date-field" onClick={() => setCalendarOpen(!calendarOpen)}>
-            <div className="date-group">
-              <label>Check-in:</label>
-              <div className="date-value">
-                {checkIn ? formatDateDisplay(checkIn) : "Add date"} 📅
-              </div>
-            </div>
-          </div>
-
-          <div className="sb-divider"></div>
-
-          <div className="sb-field date-field" onClick={() => setCalendarOpen(!calendarOpen)}>
-            <div className="date-group">
-              <label>Check-out:</label>
-              <div className="date-value">
-                {checkOut ? formatDateDisplay(checkOut) : "Add date"} 📅
-              </div>
-            </div>
-          </div>
-
-          <div className="sb-divider"></div>
-
-          <div className="sb-field select-field">
-            <label>Rooms:</label>
-            <select value={rooms} onChange={(e) => setRooms(e.target.value)}>
-              {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
-          </div>
-
-          <div className="sb-divider"></div>
-
-          <div className="sb-field select-field">
-            <label>Adults:</label>
-            <select value={adults} onChange={(e) => setAdults(e.target.value)}>
-              {[1, 2, 3, 4, 5, 6].map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
-          </div>
-
-          <div className="sb-divider"></div>
-
-          <div className="sb-field select-field">
-            <label>Kids:</label>
-            <select value={kids} onChange={(e) => setKids(e.target.value)}>
-              {[0, 1, 2, 3, 4].map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
-          </div>
-
-          <button className="sb-button" onClick={handleFindRooms}>
-            FIND ROOMS
-          </button>
-
-          <div className="calendar-anchor">
-            <CalendarPopup
-              open={calendarOpen}
-              onClose={() => setCalendarOpen(false)}
-              checkIn={checkIn}
-              checkOut={checkOut}
-              onChangeRange={handleRangeChange}
-            />
-          </div>
-        </div>
-      </div> */}
+    
 
 <div className="searchbar-container">
   <SearchBar
@@ -563,63 +445,7 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer className="site-footer">
-        <div className="footer-top">
-          <div className="footer-brand-col">
-            <div className="footer-logo">
-              <span className="footer-icon">🏯</span>
-              <div className="footer-brand-text">
-                <span className="f-brand-name">Beyond Trips™</span>
-                <span className="f-brand-sub">An independent travel network</span>
-              </div>
-            </div>
-
-            <div className="social-icons">
-              <span className="s-icon">f</span>
-              <span className="s-icon">🐦</span>
-              <span className="s-icon">📸</span>
-              <span className="s-icon">P</span>
-              <span className="s-icon">▶</span>
-            </div>
-          </div>
-
-          <div className="footer-links-group">
-            <div className="footer-col">
-              <h4>Learn more</h4>
-              <ul>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">FAQs</a></li>
-                <li><a href="#">News</a></li>
-                <li><a href="#">Customer Reviews</a></li>
-                <li><a href="#">Terms of Service</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Sitemap</a></li>
-                <li><a href="#">Property Listing</a></li>
-                <li><a href="#">Hotel Non-Affiliation</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-col">
-              <h4>Get in Touch</h4>
-              <ul>
-                <li><a href="#">Contact Us</a></li>
-                <li><a href="#">My Booking</a></li>
-                <li><a href="#">Group Rates</a></li>
-                <li><a href="#">Weddings</a></li>
-                <li><a href="#">Extended Stay</a></li>
-                <li><a href="#">Privacy Choices <span className="check-icon">✓</span></a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div className="footer-bottom">
-          <div className="copyright">Copyright 2025 Beyond Trips™.</div>
-          <div className="disclaimer">Beyond Trips™ is an independent travel network offering over 100,000 hotels worldwide.</div>
-        </div>
-      </footer>
+ <Footer />
 
     </div>
   );

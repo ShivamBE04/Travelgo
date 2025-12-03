@@ -234,8 +234,35 @@ useEffect(() => {
   const toggleAmenities = (i) => {
     setExpandedAmenities((p) => ({ ...p, [i]: !p[i] }));
   };
+//shimmer 
+  if (loading) {
+  return (
+    <div className="hotel-details-skeleton">
 
-  if (loading) return <div className="loading-container">Loading...</div>;
+      <div className="skeleton-title"></div>
+      <div className="skeleton-location"></div>
+
+      <div className="skeleton-gallery">
+        <div className="skeleton-main-img"></div>
+
+        <div className="skeleton-side-imgs">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="skeleton-thumb"></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="skeleton-about">
+        <div className="skeleton-line w-80"></div>
+        <div className="skeleton-line w-60"></div>
+        <div className="skeleton-line w-90"></div>
+        <div className="skeleton-line w-70"></div>
+      </div>
+
+    </div>
+  );
+}
+
 
   const activeData = details || hotelData || {};
 
@@ -266,10 +293,7 @@ useEffect(() => {
           )}
         </div>
 
-        {/* -------------------------------------------
-            ✅ OPTION A — EXPEDIA STYLE PHOTO GRID
-            1 BIG LEFT + 4 SMALL RIGHT
-        -------------------------------------------- */}
+        
         <div className="hotel-photo-grid">
           {/* BIG IMAGE LEFT */}
           <div
@@ -376,106 +400,163 @@ useEffect(() => {
             )}
 
             {/* ROOMS */}
-            <section className="info-box" id="rooms">
-              <h2>Available Rooms</h2>
+          {/* ROOMS */}
+<section className="info-box" id="rooms">
+  <h2>Available Rooms</h2>
 
-              {roomsLoading ? (
-                <p>Checking rates...</p>
-              ) : roomList.length === 0 ? (
-                <p>No rooms found.</p>
-              ) : (
-                <div className="room-list">
-                  {roomList.map((room, idx) => {
-                    const roomImage = getRoomImage(room);
-                    const facilities = room.facilities || [];
-                    const isOpen = expandedAmenities[idx];
+  {roomsLoading ? (
+    <div className="room-list">
+      {/* ⭐ SHIMMER ROOM CARD 1 */}
+      <div className="room-card shimmer-room">
+        <div className="room-image-col">
+          <div className="shimmer room-img"></div>
+        </div>
+        <div className="room-info-col">
+          <div className="shimmer room-title"></div>
+          <div className="shimmer room-line"></div>
+          <div className="shimmer room-line short"></div>
+          <div className="shimmer room-badge"></div>
+          <div className="shimmer room-badge"></div>
+        </div>
+        <div className="room-price-col">
+          <div className="shimmer price-box"></div>
+        </div>
+      </div>
 
-                    return (
-                      <div key={idx} className="room-card">
-                        <div className="room-image-col">
-                          <div
-                            className="room-image-wrapper"
-                            onClick={() =>
-                              openGallery(
-                                room.images || [],
-                                0,
-                                room.name || "Room Photos"
-                              )
-                            }
-                          >
-                            <img src={roomImage} alt="" />
-                            <div className="room-photo-overlay">
-                              View room photos
-                            </div>
-                          </div>
-                        </div>
+      {/* ⭐ SHIMMER ROOM CARD 2 */}
+      <div className="room-card shimmer-room">
+        <div className="room-image-col">
+          <div className="shimmer room-img"></div>
+        </div>
+        <div className="room-info-col">
+          <div className="shimmer room-title"></div>
+          <div className="shimmer room-line"></div>
+          <div className="shimmer room-line short"></div>
+          <div className="shimmer room-badge"></div>
+          <div className="shimmer room-badge"></div>
+        </div>
+        <div className="room-price-col">
+          <div className="shimmer price-box"></div>
+        </div>
+      </div>
 
-                        <div className="room-info-col">
-                          <h3>{room.name}</h3>
-
-                          <div
-                            className="room-desc-html"
-                            dangerouslySetInnerHTML={{
-                              __html:
-                                room.description?.split("<br/>")[0] || "",
-                            }}
-                          />
-
-                          <div className="room-amenities-list">
-                            {(isOpen ? facilities : facilities.slice(0, 4)).map(
-                              (f, i) => (
-                                <span key={i} className="room-badge">
-                                  {f.name}
-                                </span>
-                              )
-                            )}
-                          </div>
-
-                          {facilities.length > 4 && (
-                            <button
-                              className="room-amenities-toggle"
-                              onClick={() => toggleAmenities(idx)}
-                            >
-                              {isOpen
-                                ? "Show fewer amenities"
-                                : `Show ${
-                                    facilities.length - 4
-                                  } more amenities`}
-                            </button>
-                          )}
-                        </div>
-
-                       <div className="room-price-col">
-  <div className="price-main">
-    <span className="price-current">₹{room.perNight.toLocaleString()}</span>
-    {room.strikePrice && (
-      <span className="price-old">₹{room.strikePrice.toLocaleString()}</span>
-    )}
-    <span className="price-night">/ night</span>
-  </div>
-
-  <div className="price-tax-info">Includes taxes and charges</div>
-
-  <div className="price-total">
-    Total: ₹{room.totalPrice.toLocaleString()}
-  </div>
-
-  {room.rate?.cancellationPolicy?.includes("non") ? (
-    <div className="tag-bad">Non-Refundable</div>
+      {/* ⭐ SHIMMER ROOM CARD 3 */}
+      <div className="room-card shimmer-room">
+        <div className="room-image-col">
+          <div className="shimmer room-img"></div>
+        </div>
+        <div className="room-info-col">
+          <div className="shimmer room-title"></div>
+          <div className="shimmer room-line"></div>
+          <div className="shimmer room-line short"></div>
+          <div className="shimmer room-badge"></div>
+          <div className="shimmer room-badge"></div>
+        </div>
+        <div className="room-price-col">
+          <div className="shimmer price-box"></div>
+        </div>
+      </div>
+    </div>
+  ) : roomList.length === 0 ? (
+    <p>No rooms found.</p>
   ) : (
-    <div className="tag-good">Free Cancellation</div>
-  )}
+    <div className="room-list">
+      {roomList.map((room, idx) => {
+        const roomImage = getRoomImage(room);
+        const facilities = room.facilities || [];
+        const isOpen = expandedAmenities[idx];
 
-  <button className="book-btn">BOOK NOW</button>
-</div>
-
-
-                      </div>
-                    );
-                  })}
+        return (
+          <div key={idx} className="room-card">
+            <div className="room-image-col">
+              <div
+                className="room-image-wrapper"
+                onClick={() =>
+                  openGallery(
+                    room.images || [],
+                    0,
+                    room.name || "Room Photos"
+                  )
+                }
+              >
+                <img src={roomImage} alt="" />
+                <div className="room-photo-overlay">
+                  View room photos
                 </div>
+              </div>
+            </div>
+
+            <div className="room-info-col">
+              <h3>{room.name}</h3>
+
+              <div
+                className="room-desc-html"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    room.description?.split("<br/>")[0] || "",
+                }}
+              />
+
+              <div className="room-amenities-list">
+                {(isOpen ? facilities : facilities.slice(0, 4)).map(
+                  (f, i) => (
+                    <span key={i} className="room-badge">
+                      {f.name}
+                    </span>
+                  )
+                )}
+              </div>
+
+              {facilities.length > 4 && (
+                <button
+                  className="room-amenities-toggle"
+                  onClick={() => toggleAmenities(idx)}
+                >
+                  {isOpen
+                    ? "Show fewer amenities"
+                    : `Show ${
+                        facilities.length - 4
+                      } more amenities`}
+                </button>
               )}
-            </section>
+            </div>
+
+            <div className="room-price-col">
+              <div className="price-main">
+                <span className="price-current">
+                  ₹{room.perNight.toLocaleString()}
+                </span>
+                {room.strikePrice && (
+                  <span className="price-old">
+                    ₹{room.strikePrice.toLocaleString()}
+                  </span>
+                )}
+                <span className="price-night">/ night</span>
+              </div>
+
+              <div className="price-tax-info">
+                Includes taxes and charges
+              </div>
+
+              <div className="price-total">
+                Total: ₹{room.totalPrice.toLocaleString()}
+              </div>
+
+              {room.rate?.cancellationPolicy?.includes("non") ? (
+                <div className="tag-bad">Non-Refundable</div>
+              ) : (
+                <div className="tag-good">Free Cancellation</div>
+              )}
+
+              <button className="book-btn">BOOK NOW</button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  )}
+</section>
+
           </div>
 
           {/* SIDEBAR */}

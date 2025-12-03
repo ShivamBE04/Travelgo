@@ -38,153 +38,146 @@ const CalendarIcon = ({ size = 16 }) => (
 
 
   // ⭐⭐⭐ INLINE CALENDARPOPUP (INSIDE THIS FILE)
-  const CalendarPopup = ({ open, onClose, checkIn, checkOut, onChangeRange }) => {
-    const today = new Date();
-    const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const maxDate = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
+const CalendarPopup = ({ open, onClose, checkIn, checkOut, onChangeRange }) => {
+  const today = new Date();
+  const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const maxDate = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
 
-    const [startMonthOffset, setStartMonthOffset] = useState(0);
+  const [offset, setOffset] = useState(0);
 
-    const addMonths = (date, months) => {
-      const d = new Date(date);
-      d.setMonth(d.getMonth() + months);
-      return d;
-    };
-
-    const sameDay = (a, b) => {
-      if (!a || !b) return false;
-      return (
-        a.getFullYear() === b.getFullYear() &&
-        a.getMonth() === b.getMonth() &&
-        a.getDate() === b.getDate()
-      );
-    };
-
-    const isBefore = (a, b) => a.getTime() < b.getTime();
-    const isAfter = (a, b) => a.getTime() > b.getTime();
-
-    const getMonthDays = (year, month) => {
-      const days = [];
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-      const startWeekDay = firstDay.getDay();
-
-      for (let i = 0; i < startWeekDay; i++) days.push(null);
-      for (let d = 1; d <= lastDay.getDate(); d++) {
-        days.push(new Date(year, month, d));
-      }
-      return days;
-    };
-
-    const handleDayClick = (date) => {
-      if (!date) return;
-      if (isBefore(date, minDate) || isAfter(date, maxDate)) return;
-
-      if (!checkIn || (checkIn && checkOut)) {
-        onChangeRange(date, null);
-      } else if (checkIn && !checkOut) {
-        if (isBefore(date, checkIn)) {
-          onChangeRange(date, null);
-        } else {
-          onChangeRange(checkIn, date);
-        }
-      }
-    };
-
-    if (!open) return null;
-
-    const firstMonthDate = addMonths(minDate, startMonthOffset);
-    const secondMonthDate = addMonths(minDate, startMonthOffset + 1);
-
-    return (
-      <div className="calendar-popup">
-        <div className="cal-header">
-          <button
-            className="cal-nav-btn"
-            disabled={startMonthOffset === 0}
-            onClick={() => setStartMonthOffset((v) => v - 1)}
-          >
-            ‹
-          </button>
-
-          <div className="cal-months">
-            {[firstMonthDate, secondMonthDate].map((monthDate, index) => {
-              const year = monthDate.getFullYear();
-              const month = monthDate.getMonth();
-              const label = monthDate.toLocaleString("default", {
-                month: "long",
-                year: "numeric",
-              });
-
-              const days = getMonthDays(year, month);
-              const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-
-              return (
-                <div className="cal-month" key={index}>
-                  <div className="cal-month-title">{label}</div>
-                  <div className="cal-weekdays">
-                    {weekDays.map((w) => (
-                      <div key={w} className="cal-weekday">
-                        {w}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="cal-days">
-                    {days.map((d, idx) => {
-                      if (!d) return <div key={idx} className="cal-day empty" />;
-
-                      const disabled =
-                        isBefore(d, minDate) || isAfter(d, maxDate);
-                      const isStart = sameDay(d, checkIn);
-                      const isEnd = sameDay(d, checkOut);
-                      const inRange =
-                        checkIn &&
-                        checkOut &&
-                        isAfter(d, checkIn) &&
-                        isBefore(d, checkOut);
-
-                      let classes = "cal-day";
-                      if (disabled) classes += " disabled";
-                      if (isStart || isEnd) classes += " selected";
-                      if (inRange) classes += " in-range";
-
-                      return (
-                        <div
-                          key={idx}
-                          className={classes}
-                          onClick={() => !disabled && handleDayClick(d)}
-                        >
-                          {d.getDate()}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <button
-            className="cal-nav-btn"
-            disabled={startMonthOffset >= 10}
-            onClick={() => setStartMonthOffset((v) => v + 1)}
-          >
-            ›
-          </button>
-        </div>
-
-        <div className="cal-footer">
-          <button className="cal-clear" onClick={() => onChangeRange(null, null)}>
-            Clear Dates
-          </button>
-          <button className="cal-done" onClick={onClose}>
-            Done
-          </button>
-        </div>
-      </div>
-    );
+  const addMonths = (date, months) => {
+    const d = new Date(date);
+    d.setMonth(d.getMonth() + months);
+    return d;
   };
+
+  const sameDay = (a, b) =>
+    a && b &&
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+  const isBefore = (a, b) => a.getTime() < b.getTime();
+  const isAfter = (a, b) => a.getTime() > b.getTime();
+
+  const getMonthDays = (year, month) => {
+    const days = [];
+    const first = new Date(year, month, 1);
+    const last = new Date(year, month + 1, 0);
+    const gap = first.getDay();
+
+    for (let i = 0; i < gap; i++) days.push(null);
+    for (let d = 1; d <= last.getDate(); d++) {
+      days.push(new Date(year, month, d));
+    }
+    return days;
+  };
+
+  const handleDayClick = (date) => {
+    if (!date) return;
+
+    if (!checkIn || (checkIn && checkOut)) {
+      onChangeRange(date, null);
+    } else if (checkIn && !checkOut) {
+      if (isBefore(date, checkIn)) onChangeRange(date, null);
+      else onChangeRange(checkIn, date);
+    }
+  };
+
+  if (!open) return null;
+
+  const month1 = addMonths(minDate, offset);
+  const month2 = addMonths(minDate, offset + 1);
+
+  return (
+    <div className="calendar-popup">
+
+      {/* HEADER WITH BOOKING.COM STYLE ARROWS */}
+      <div className="cal-header">
+        
+        <button
+          className="cal-nav-btn"
+          disabled={offset === 0}
+          onClick={() => setOffset(o => o - 1)}
+        >
+          <span className="arrow-icon">‹</span>
+        </button>
+
+        <button
+          className="cal-nav-btn"
+          disabled={offset >= 10}
+          onClick={() => setOffset(o => o + 1)}
+        >
+          <span className="arrow-icon">›</span>
+        </button>
+
+      </div>
+
+      {/* TWO MONTHS SIDE-BY-SIDE */}
+      <div className="cal-months">
+        {[month1, month2].map((m, idx) => {
+          const y = m.getFullYear();
+          const mo = m.getMonth();
+          const label = m.toLocaleString("default", { month: "long", year: "numeric" });
+          const days = getMonthDays(y, mo);
+
+          return (
+            <div className="cal-month" key={idx}>
+              
+              <div className="cal-month-title">{label}</div>
+
+              <div className="cal-weekdays">
+                {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(d => (
+                  <div key={d} className="cal-weekday">{d}</div>
+                ))}
+              </div>
+
+              <div className="cal-days">
+                {days.map((d, i) => {
+                  if (!d) return <div key={i} className="cal-day empty" />;
+
+                  const disabled = isBefore(d, minDate) || isAfter(d, maxDate);
+                  const start = sameDay(d, checkIn);
+                  const end = sameDay(d, checkOut);
+                  const inRange =
+                    checkIn && checkOut && isAfter(d, checkIn) && isBefore(d, checkOut);
+
+                  let cls = "cal-day";
+                  if (disabled) cls += " disabled";
+                  if (start) cls += " start selected";
+                  if (end) cls += " end selected";
+                  if (inRange) cls += " in-range";
+
+                  return (
+                    <div
+                      key={i}
+                      className={cls}
+                      onClick={() => !disabled && handleDayClick(d)}
+                    >
+                      {d.getDate()}
+                    </div>
+                  );
+                })}
+              </div>
+
+            </div>
+          );
+        })}
+      </div>
+
+      {/* FOOTER */}
+      <div className="cal-footer">
+        <button className="cal-clear" onClick={() => onChangeRange(null, null)}>
+          Clear Dates
+        </button>
+        <button className="cal-done" onClick={onClose}>
+          Done
+        </button>
+      </div>
+
+    </div>
+  );
+};
 
   // ⭐⭐⭐ MAIN SEARCH BAR UI
   return (
