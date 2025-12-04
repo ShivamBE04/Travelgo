@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-import "./App.css";
-import Header from "./components/Header";
+import "../App.css";
+import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
 
 
 const HotelDetails = () => {
   const { id } = useParams();
   const location = useLocation();
+    const navigate = useNavigate();   // ⭐ IMPORTANT!
   const { hotelData, searchParams } = location.state || {};
 
   const [details, setDetails] = useState(null);
@@ -548,7 +550,22 @@ useEffect(() => {
                 <div className="tag-good">Free Cancellation</div>
               )}
 
-              <button className="book-btn">BOOK NOW</button>
+<button
+  className="book-btn"
+  onClick={() =>
+    navigate("/checkout", {
+      state: {
+        hotel: activeData,
+        room: room,
+        searchParams: searchParams,
+        image: getRoomImage(room),
+      },
+    })
+  }
+>
+  BOOK NOW
+</button>
+
             </div>
           </div>
         );

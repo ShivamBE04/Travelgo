@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./App.css";
+import "../App.css";
 
-import Header from "./components/Header";
-import SearchBar from "./components/SearchBar";
-import { fetchLocationSuggestions } from "./api/zentrum";
+import Header from "../components/Header";
+import SearchBar from "../components/SearchBar";
+import { fetchLocationSuggestions } from "../api/zentrum";
 
 
 const HotelList = () => {
@@ -374,6 +374,59 @@ const HotelList = () => {
 
             const renderStars = (rating) =>
               "★".repeat(parseInt(rating) || 0);
+            
+const buildHotelUrl = (hotelId) => {
+  const formattedCheckIn = checkIn?.toLocaleDateString("en-US");
+  const formattedCheckOut = checkOut?.toLocaleDateString("en-US");
+
+  const params = new URLSearchParams();
+  params.set("checkIn", formattedCheckIn);
+  params.set("checkOut", formattedCheckOut);
+  params.set("rooms", rooms);
+  params.set("adults[1]", adults);
+  params.set("children[1]", kids);
+  params.set("currency", "INR");
+
+  // DESTINATION PARAMS
+  params.set(
+    "destinationName",
+    confirmedDestination?.fullName ||
+      confirmedDestination?.name ||
+      initialDestinationObj?.fullName ||
+      initialDestinationObj?.name ||
+      ""
+  );
+
+  params.set(
+    "destinationId",
+    confirmedDestination?.id || initialDestinationObj?.id || ""
+  );
+
+  params.set(
+    "destinationType",
+    confirmedDestination?.type || initialDestinationObj?.type || ""
+  );
+
+  params.set(
+    "lat",
+    confirmedDestination?.latitude ||
+      confirmedDestination?.lat ||
+      initialDestinationObj?.latitude ||
+      initialDestinationObj?.lat ||
+      ""
+  );
+
+  params.set(
+    "lng",
+    confirmedDestination?.longitude ||
+      confirmedDestination?.lng ||
+      initialDestinationObj?.longitude ||
+      initialDestinationObj?.lng ||
+      ""
+  );
+
+  return `/hotel/${hotelId}?${params.toString()}`;
+};
 
             return (
               <div key={index} className="hotel-card-horizontal">
@@ -381,20 +434,21 @@ const HotelList = () => {
                   <img
                     src={img}
                     alt={hotel.name}
-                    onClick={() =>
-                      navigate(`/hotel/${hotel.id}`, {
-                        state: {
-                          hotelData: hotel,
-                          searchParams: {
-                            checkIn,
-                            checkOut,
-                            rooms,
-                            adults,
-                            kids,
-                          },
-                        },
-                      })
-                    }
+                   onClick={() =>
+  navigate(buildHotelUrl(hotel.id), {
+    state: {
+      hotelData: hotel,
+      searchParams: {
+        checkIn,
+        checkOut,
+        rooms,
+        adults,
+        kids,
+      },
+    },
+  })
+}
+
                     style={{ cursor: "pointer" }}
                     onError={(e) =>
                       (e.target.src =
@@ -406,20 +460,21 @@ const HotelList = () => {
                 <div className="card-middle">
                   <h3
                     className="card-title"
-                    onClick={() =>
-                      navigate(`/hotel/${hotel.id}`, {
-                        state: {
-                          hotelData: hotel,
-                          searchParams: {
-                            checkIn,
-                            checkOut,
-                            rooms,
-                            adults,
-                            kids,
-                          },
-                        },
-                      })
-                    }
+                   onClick={() =>
+  navigate(buildHotelUrl(hotel.id), {
+    state: {
+      hotelData: hotel,
+      searchParams: {
+        checkIn,
+        checkOut,
+        rooms,
+        adults,
+        kids,
+      },
+    },
+  })
+}
+
                     style={{ cursor: "pointer" }}
                   >
                     {hotel.name}
@@ -449,20 +504,20 @@ const HotelList = () => {
                   )}
                   <button
                     className="btn-book"
-                    onClick={() =>
-                      navigate(`/hotel/${hotel.id}`, {
-                        state: {
-                          hotelData: hotel,
-                          searchParams: {
-                            checkIn,
-                            checkOut,
-                            rooms,
-                            adults,
-                            kids,
-                          },
-                        },
-                      })
-                    }
+                   onClick={() =>
+  navigate(buildHotelUrl(hotel.id), {
+    state: {
+      hotelData: hotel,
+      searchParams: {
+        checkIn,
+        checkOut,
+        rooms,
+        adults,
+        kids,
+      },
+    },
+  })
+}
                   >
                     BOOK NOW
                   </button>

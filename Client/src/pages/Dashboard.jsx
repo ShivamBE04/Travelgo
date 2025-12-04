@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import "./App.css";
+import "../App.css";
 import { useNavigate } from "react-router-dom";
-import { fetchLocationSuggestions } from "./api/zentrum";
+import { fetchLocationSuggestions } from "../api/zentrum";
 
 
-import Header from "./components/Header";
-import SearchBar from "./components/SearchBar";
+import Header from "../components/Header";
+import SearchBar from "../components/SearchBar";
 // import Footer from "./components/Footer"; 
 
+import { buildBookingParams } from "../utils/buildBookingParams";
 
 const otherCities = [
   "Honolulu Hotels", "Miami Beach Hotels", "Reno Hotels", "Memphis Hotels",
@@ -307,26 +308,47 @@ export default function Dashboard() {
   };
 
  const handleFindRooms = () => {
-    // 1. Validation
-    if (!checkIn || !checkOut || !selectedLocationObj) {
-      alert("Please select a destination and dates");
-      return;
-    }
+  // 1. Validation
+  if (!checkIn || !checkOut || !selectedLocationObj) {
+    alert("Please select a destination and dates");
+    return;
+  }
 
-    // 2. ALWAYS Navigate to the Hotel List (/hotels)
-    // Whether it's a City or a specific Hotel, we want to show a list of results.
-    // The backend will use the 'coordinates' to find hotels in that area.
-    navigate("/hotels", {
-      state: {
-        destination: selectedLocationObj, // Contains { id, name, type, coordinates }
-        checkIn,
-        checkOut,
-        rooms,
-        adults,
-        kids
-      }
-    });
-  };
+  // ⭐ Convert dates to MM/DD/YYYY for URL
+  const formattedCheckIn = checkIn.toLocaleDateString("en-US");
+  const formattedCheckOut = checkOut.toLocaleDateString("en-US");
+
+  // ⭐ Build booking parameters  
+  const params = new URLSearchParams();
+  params.set("checkIn", formattedCheckIn);
+  params.set("checkOut", formattedCheckOut);
+  params.set("rooms", rooms);
+  params.set("adults[1]", adults);
+  params.set("children[1]", kids);
+  params.set("currency", "INR");
+
+  
+// ⭐ ADD DESTINATION PARAMS
+params.set("destinationName", selectedLocationObj.fullName || selectedLocationObj.name);
+params.set("destinationId", selectedLocationObj.id || "");
+params.set("destinationType", selectedLocationObj.type || "");
+params.set("lat", selectedLocationObj.latitude || selectedLocationObj.lat || "");
+params.set("lng", selectedLocationObj.longitude || selectedLocationObj.lng || "");
+  const queryString = params.toString();
+
+  // 2. Navigate to Hotel List WITH query + state (your logic untouched)
+  navigate(`/hotels?${queryString}`, {
+    state: {
+      destination: selectedLocationObj,
+      checkIn,
+      checkOut,
+      rooms,
+      adults,
+      kids
+    }
+  });
+};
+
   const performLogin = () => {
     setIsLoggedIn(true);
     setIsLoginOpen(false);

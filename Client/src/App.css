@@ -2757,3 +2757,332 @@ body, html {
   }
 }
 
+
+   /* GLOBAL WRAPPER */
+
+/* ============================================================
+   GLOBAL WRAPPER
+============================================================ */
+.checkout-wrapper {
+  width: 100%;
+  padding: 20px;
+  background: #fff;
+}
+
+/* ============================================================
+   HERO IMAGE
+============================================================ */
+.checkout-hero {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.checkout-hero-img {
+  width: 100%;
+  max-width: 1200px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* ============================================================
+   HOTEL INFORMATION
+============================================================ */
+.checkout-hotel-top {
+  max-width: 1200px;
+  margin: 25px auto;
+  padding: 0 20px;
+  /* text-align: center;          
+  display: flex;
+  flex-direction: column;
+  align-items: center;   */
+
+}
+
+.checkout-hotel-top h1 {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.checkout-hotel-top h3 {
+  font-size: 22px;
+  margin-top: 5px;
+}
+
+.checkout-hotel-top p {
+  font-size: 18px;
+  color: #444;
+  margin: 4px 0;
+}
+
+/* ============================================================
+   MAIN LAYOUT → LEFT FORM + RIGHT SUMMARY
+============================================================ */
+.checkout-container {
+  max-width: 1200px;
+  margin: 25px auto;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* Left side full column (form, room, payment) */
+.checkout-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* ============================================================
+   FORM CARD (booking.com style)
+============================================================ */
+.booking-form-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Header inside form */
+.bookingcom-form-header,
+.booking-form-header {
+  background: #eaf4ff;
+  border-left: 4px solid #0071c2;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.required-banner {
+  font-size: 13px;
+  color: #444;
+  background: #e7ffe1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #b6efb6;
+}
+
+/* Field alignment rows */
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.form-row-1 {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+}
+
+/* Inputs + selects */
+.booking-form-card input,
+.booking-form-card select,
+.payment-section input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #c9c9c9;
+  border-radius: 6px;
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+input:focus,
+select:focus {
+  border-color: #0071c2;
+  box-shadow: 0 0 5px rgba(0, 113, 194, 0.3);
+  outline: none;
+}
+
+/* ============================================================
+   PHONE FIELD
+============================================================ */
+.phone-flex {
+  display: flex;
+  gap: 12px;
+}
+
+.country-code-select {
+  min-width: 120px;
+  padding: 12px;
+}
+
+/* ============================================================
+   ROOM SUMMARY BOX
+============================================================ */
+.room-summary-box {
+  padding: 18px;
+  background: #f7f9fc;
+  border: 1px solid #dce3ee;
+  border-radius: 12px;
+}
+
+.room-tag {
+  background: #ffe5e5;
+  color: #b80000;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.meal-included {
+  color: #078a2f;
+  font-weight: bold;
+}
+
+/* ============================================================
+   PAYMENT SECTION
+============================================================ */
+.payment-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.payment-section h3 {
+  margin-bottom: 15px;
+}
+
+.bform-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ============================================================
+   BOOKING BUTTON
+============================================================ */
+.booking-next-btn {
+  background: #2a6edb !important;
+  color: white;
+  padding: 16px;
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+}
+
+.booking-next-btn:hover {
+  background: #1f5bb8 !important;
+}
+
+.no-charge-note {
+  font-size: 13px;
+  text-align: center;
+  color: #555;
+}
+
+/* ============================================================
+   RIGHT SUMMARY CARD
+============================================================ */
+.checkout-summary {
+  width: 350px;
+  background: #fafafa;
+  padding: 22px;
+  border-radius: 12px;
+  border: 1px solid #ececec;
+}
+
+.summary-note {
+  font-size: 14px;
+  color: #444;
+}
+
+/* ============================================================
+   RESPONSIVE BEHAVIOR
+============================================================ */
+@media (max-width: 992px) {
+  .checkout-container {
+    flex-direction: column;
+  }
+  
+  .checkout-summary {
+    width: 100%;
+  }
+
+  .form-row-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .phone-flex {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .checkout-hero-img {
+    height: 230px;
+  }
+
+  .checkout-hotel-top {
+    text-align: center;
+  }
+
+  .checkout-hotel-top h1 {
+    font-size: 28px;
+  }
+
+  .bform-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-hero-img {
+    height: 180px;
+  }
+
+  .checkout-container {
+    gap: 15px;
+  }
+}
+.booking-form-card input,
+.booking-form-card select,
+.payment-section input,
+.payment-section select {
+  background: #ffffff !important;
+  color: #000 !important;
+  border: 1px solid #c9c9c9 !important;
+}
+
+.booking-form-card input::placeholder,
+.payment-section input::placeholder {
+  color: #777 !important;
+}
+/* Amenities container */
+.room-amenities-box {
+  background: #f7f9fc;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e5ebf3;
+  margin-top: 20px;
+}
+
+.room-amenities-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.room-amenities-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.room-amenities-list li {
+  font-size: 15px;
+  color: #2a3f75;
+  margin-bottom: 6px;
+}
