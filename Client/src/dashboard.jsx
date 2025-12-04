@@ -6,7 +6,7 @@ import { fetchLocationSuggestions } from "./api/zentrum";
 
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
-import Footer from "./components/Footer"; 
+// import Footer from "./components/Footer"; 
 
 
 const otherCities = [
@@ -445,7 +445,7 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
- <Footer />
+ {/* <Footer /> */}
 
     </div>
   );

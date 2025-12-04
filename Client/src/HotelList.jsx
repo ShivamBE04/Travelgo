@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
 import { fetchLocationSuggestions } from "./api/zentrum";
 
+
 const HotelList = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -321,17 +322,18 @@ const HotelList = () => {
         )}
 
         {hotels.length > 0 && (
-          <div className="results-count-header">
-            <h2>
-              {hotels.length}{" "}
-              {selectedLocationObj?.name ||
-                selectedLocationObj?.cityName ||
-                initialDestinationObj?.name ||
-                "hotels"}{" "}
-              hotels available
-            </h2>
-          </div>
-        )}
+  <div className="results-count-header">
+    <h2>
+      {hotels.length}{" "}
+      {confirmedDestination?.name ||
+        confirmedDestination?.cityName ||
+        initialDestinationObj?.name ||
+        "hotels"}{" "}
+      hotels available 
+    </h2>
+  </div>
+)}
+
 
         <div className="hotel-results-list">
           {hotels.map((hotel, index) => {
